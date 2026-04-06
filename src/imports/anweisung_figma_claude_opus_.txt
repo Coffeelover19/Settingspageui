@@ -1,0 +1,23 @@
+Denke dran settingslab ersetzt nicht settings die settings sollen davon unberührt bleiben.
+Settingslab:
+bei persöhnlich ist Userprofil und preferenzen gemischt, bitte mache das einzelnd und präferenzen in den extra punkt präferenzen.
+	Der inhalt bei preferenzen soll preferiertes modell und Sprache sein.
+	Der inhalt bei User profil sollen die persöhnlich informationen sein, davor noch das profilbild usw.
+Zugriff soll Nutzerverwaltung heissen
+	die unterpunkte bei nutzerverwaltung sollen "Mitglieder" "lizenzen" "Gruppen" und "Berechtigung" sein.
+		Bei Mitglieder sollen alle benutzer aufgelistet werden
+		Bei Lizenzen soll man den Mitgliedern eine Lizenz zuteilen können oder entfernen
+		Bei Gruppen soll man gruppen erstellen und löschen können, sowie eine auflistung bekommen, welche gruppen da sind.
+			wenn man auf eine gruppe klickt dann kommt man auf eine weitere unterseite wo man die mitglieder sehen kann.
+		Bei Berechtigung soll das sein was wir bei permissions schon festgesetzt haben nur die übersicht von lizenzen soll da raus.
+Es soll eine neue kaegorie geben mti Produkt
+	unterkategorien sind "Chats" "Templates" "Todo Manager" "Kontexte" "Agenten" "Einstellungs feature"
+		bei diesen unterkategorien soll das rein was seither in den normalen setting als feature gating existierte nur halt aufgesplitet.
+		
+Billing bei Organisation wird zu "Abrechnung" dort sollen die selben informationen wie bei den normalen setting auch nochmal sein.
+Org management wird unterteilt in "Modelle" hier sollen die Modellfamilien und verfügbare unter modelle einstellbar sein. Außerdem soll die Unterkategorie "Labels" entstehen wo die Labels und farbe der Labels eingestellt werden können.
+das monitoring bei system wird zu analytics und wird in die kategorie Organisation verschoben.
+	Monitoring bekommt die selben inhalte wie das normale settings, nur das feedback draußen bleibt
+	dann soll bei organisation eine weitere unterkategorie mit Feedback kommen, hier soll das rein was bei monitoring als feedback drinn ist. 
+SMB Config soll inhaltlich gleich aussehen wie bei den normalen settings, nur ohne benutzer zu kontexten.
+SMB	SMB Config soll verschoben werden zu "Organisation"

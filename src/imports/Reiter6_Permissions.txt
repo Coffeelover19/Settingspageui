@@ -1,0 +1,357 @@
+Permissions
+Zielbild
+
+Der Reiter Permissions ist der Ort für operative Berechtigungen und Lizenzzuweisung.
+
+Er beantwortet zwei getrennte, aber zusammenhängende Fragen:
+
+Was darf ein User oder eine Gruppe innerhalb sichtbarer Funktionen tun?
+Welche User haben überhaupt eine zugewiesene Lizenz und damit Zugang zum lizenzierten Funktionsraum?
+
+Er ist damit der richtige Ort für:
+
+User- und Gruppenrechte
+explizite Overrides
+kontextbezogene Freigaben
+Lizenzzuweisung auf User-Ebene
+
+Das passt fachlich gut zu Kolai, weil die Produktoberfläche bereits aus klaren Funktionsblöcken besteht: Im Chat werden Modell, Projekt als Kontext, Reasoning, zusätzliche Kontexte und Prompt-Vorlagen direkt vor dem Absenden konfiguriert; zusätzlich gibt es Projekte, Kontexte und Feedback als eigene Produktflächen.
+
+Grundprinzip
+
+Permissions sollen nicht als riesige Checkbox-Matrix gedacht werden, sondern als Kombination aus:
+
+1. Subjekt
+
+Wem wird etwas zugewiesen?
+
+User
+Gruppe
+später optional Organisationseinheit
+2. Lizenz / Entitlement
+
+Hat der User überhaupt eine freigegebene Lizenz?
+
+3. Ressource / Bereich
+
+Worauf bezieht sich die Berechtigung?
+
+Chat
+Projekte
+Kontexte
+Sharing
+Prompt-Vorlagen
+Group Chats
+Datenquellen / Konnektoren
+Admin-nahe Bereiche
+4. Aktion
+
+Was darf dort getan werden?
+
+sehen
+nutzen
+erstellen
+bearbeiten
+teilen
+verwalten
+administrieren
+Wichtigste UX-Entscheidung
+Keine Checkbox-Wüste
+
+Der Reiter soll nicht wie eine alte Enterprise-Tabelle mit 80 Häkchen wirken.
+
+Stattdessen:
+
+linke Spalte = User / Gruppen
+obere Summary = Lizenzstatus
+Mitte = Permission-Kategorien
+rechte Seite = Effective Access / Herkunft
+Zustandslogik
+
+Für Berechtigungen selbst gilt weiterhin:
+
+Inherited
+Allow
+Deny
+
+Das ist wichtig, weil ihr:
+
+Gruppen mitverwaltet
+User-Overrides braucht
+AD-/Keycloak-Sync habt
+später mit Kontextausnahmen arbeitet
+Visuelle Bedeutung
+Inherited = neutral grau
+Allow = positive Akzentfarbe
+Deny = rot / negativ
+
+Zusätzlich sollte immer sichtbar sein:
+
+Inherited from Group X
+Explicit user override
+Erweiterung: Lizenzvergabe
+
+Das ist der neue Teil und sollte im Permissions-Reiter als eigener oberer Block eingebaut werden.
+
+Warum hier und nicht in Billing?
+
+Weil Billing bei euch bewusst lesend gedacht ist und eher Vertrag, Kontingente und Zusatzkosten zeigt.
+Die eigentliche Entscheidung „welcher User bekommt eine der gekauften Lizenzen?“ ist eine Access-/Entitlement-Entscheidung und passt damit fachlich deutlich besser in Permissions.
+
+Empfohlener Aufbau des Lizenzbereichs
+Abschnitt: Licenses & Entitlements
+
+Ganz oben im Reiter ein kompakter Lizenzblock mit drei Ebenen:
+
+A. Lizenz-Summary
+
+KPI-ähnliche Übersicht:
+
+Gebuchte Lizenzen
+Vergebene Lizenzen
+Freie Lizenzen
+
+Beispiel:
+
+60 gebucht
+48 vergeben
+12 frei
+
+Optional als kleiner Utilization-Bar:
+48 / 60 vergeben
+
+B. Lizenzzuweisung pro User
+
+Darunter eine read/write Liste aller relevanten User.
+
+Pro User sichtbar:
+
+Name
+E-Mail
+Herkunft: AD / lokal
+Gruppen
+Lizenzstatus:
+Lizenz zugewiesen
+keine Lizenz
+optional Lizenztyp, falls später mehrere Lizenzarten kommen
+Aktion
+
+Pro User:
+
+Toggle oder Button:
+Lizenz zuweisen
+Lizenz entziehen
+Wichtig
+
+Wenn keine freien Lizenzen vorhanden sind:
+
+Aktion deaktivieren
+klarer Hinweis:
+Keine freien Lizenzen verfügbar
+C. Filter und Bulk-Ansichten
+
+Weil AD-Listen schnell groß werden, braucht dieser Block:
+
+Suche nach Name / E-Mail
+Filter:
+nur lizenzierte User
+nur unlizenzierte User
+nur AD-User
+nur Gruppenmitgliedschaften X
+
+Optional:
+
+Bulk-Zuweisung für Gruppe
+aber erst später, wenn wirklich nötig
+UX-Regel zur Lizenzvergabe
+Lizenz ist vorgelagert
+
+Ein User ohne Lizenz sollte in der Praxis nicht in denselben “vollwertigen” Rechteraum fallen wie ein lizenzierter User.
+
+Deshalb ist die Reihenfolge logisch:
+
+Lizenz vorhanden?
+Feature sichtbar?
+Welche Permissions innerhalb dieses sichtbaren Raums?
+
+Im Permissions-Reiter selbst verwaltest du davon:
+
+Lizenzzuweisung
+Rechtezuweisung
+Empfohlener Screen-Aufbau
+Linke Spalte: Subjekt-Auswahl
+
+Oben Switch:
+
+Users
+Groups
+
+Darunter:
+
+Suchfeld
+Filter
+Liste mit AD-synchronisierten Einträgen
+Badges wie:
+AD
+lokal
+Admin
+Owner
+Oberer Hauptblock: Licenses & Entitlements
+
+In der Hauptfläche zuerst:
+
+Summary Row
+gebucht
+vergeben
+frei
+darunter
+
+User-Liste zur Lizenzzuweisung
+
+optional rechts
+
+kleines Panel:
+
+letzte Änderungen
+freie Lizenzen
+Warnung bei Knappheit
+Mittlerer Hauptblock: Permission-Bereiche
+
+Darunter erst die eigentlichen Rechte.
+
+Empfohlene Cluster
+1. Chat & Collaboration
+Chat nutzen
+Group Chats nutzen
+Chat-Historie sehen
+Prompts teilen
+Feedback senden
+2. Projekte & Kontexte
+Projekte sehen
+Projekte erstellen
+Projekte bearbeiten
+Kontext auswählen
+Kontext erweitern
+Kontext teilen
+Kontext-Freigaben verwalten
+
+Das ist fachlich passend, weil Kolai Projekte als wiederverwendbare Arbeitskontexte und Kontexte als kuratierte Wissenscontainer beschreibt.
+
+3. Wissensquellen & Konnektoren
+Konnektoren sehen
+Konnektoren nutzen
+Konnektoren hinzufügen
+Datenquellen verwalten
+4. Prompt Assets
+Prompt-Vorlagen sehen
+Prompt-Vorlagen erstellen
+Prompt-Vorlagen teilen
+Prompt-Vorlagen administrieren
+
+Das ist naheliegend, weil Prompt-Vorlagen in Kolai als wiederverwendbare, standardisierte Eingabeobjekte beschrieben werden.
+
+5. Admin-nahe Rechte
+User verwalten
+Gruppen verwalten
+Permissions verwalten
+Billing sehen
+Monitoring sehen
+Rechte-Darstellung
+
+Jede Kategorie als Card oder Accordion-Section mit:
+
+Titel
+Kurzbeschreibung
+Liste der Einzelrechte
+pro Zeile:
+Permission-Name
+kurze Erklärung
+3-State-Control: Inherited | Allow | Deny
+Wichtig
+
+Nicht alles auf einmal offen.
+Standard:
+
+Kategorien zu
+bei Klick aufklappen
+
+So bleibt die Seite scanbar.
+
+Gruppen zuerst, User-Ausnahmen danach
+
+Das bleibt Best Practice.
+
+Standardfluss
+Rechte an Gruppen vergeben
+nur Ausnahmen auf User-Ebene setzen
+Warum?
+
+Weil das System sonst schnell unwartbar wird.
+
+Konsequenz im UI
+
+Im User-Detail immer sichtbar:
+
+Gruppenmitgliedschaften
+geerbte Rechte
+darunter explizite User-Overrides
+Effective Access Panel
+
+Rechts oder als Drawer ein Bereich:
+
+Effective Permissions
+
+Dieser Bereich zeigt:
+
+was am Ende wirklich gilt
+woher es kommt
+ob es vererbt oder explizit ist
+ob der User überhaupt lizenziert ist
+Beispiel
+
+Lizenzstatus
+Assigned
+
+Kontext teilen
+Allowed
+Quelle: Group Team Leads
+
+Prompt-Vorlagen administrieren
+Denied
+Quelle: explicit user override
+
+Skalierung für spätere Kontextrechte
+
+Weil Kolai stark mit Kontexten arbeitet, sollte der Reiter später auch vorbereitet sein für:
+
+Zugriff auf bestimmte Kontexte
+Zugriff auf Kontexttypen
+Zugriff auf bestimmte Quellenfamilien
+Kontextfreigaben pro User / Gruppe
+
+Das ist sinnvoll, weil Kolai Kontexte explizit als kuratierte Wissenscontainer mit Quellen und Preview beschreibt.
+
+Zusätzliche UX-Muster
+Suche nach User, Gruppe, Permission, Kontextname
+Bulk Actions:
+Allow all in category
+Deny all in category
+Reset to inherited
+Sticky Save Bar:
+Änderungen verwerfen
+Speichern
+Review Changes Modal:
+neue Overrides
+entfernte Overrides
+Lizenzänderungen
+Was der Designer vermeiden sollte
+riesige Checkbox-Tabelle
+Lizenzvergabe im Billing verstecken
+keine Unterscheidung zwischen inherited und explicit
+User und Gruppen ungeordnet in einem Mischscreen
+Feature-Sichtbarkeit in Permissions einbauen
+keine Herkunft der Rechte anzeigen
+Kernidee für den UI-Designer
+
+Permissions ist ein rechte- und entitlementszentrierter Verwaltungsbildschirm mit vier Schichten: Subjekt, Lizenzstatus, kategorisierte Berechtigungen und effektive Rechteauflösung.
+Er soll präzise, kontrolliert und nachvollziehbar wirken.

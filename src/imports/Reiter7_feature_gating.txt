@@ -1,0 +1,223 @@
+Feature Gating
+Zielbild
+
+Der Reiter Feature Gating ist vollständig unabhängig von Permissions.
+
+Er beantwortet nur eine einzige Frage:
+
+Soll ein Feature für ein Deployment oder für einen einzelnen User sichtbar sein?
+
+Es geht hier nicht um Aktionstiefe oder Bearbeitungsrechte, sondern ausschließlich um:
+
+sichtbar
+nicht sichtbar
+
+Wenn ein Feature hier off ist:
+
+erscheint es nicht in Navigation
+erscheint es nicht als Button
+erscheint es nicht als CTA im Chat
+erscheint es nicht in Menüs
+sollte möglichst auch per Deep Link abgesichert sein
+Klare Abgrenzung zu Permissions
+Permissions fragen:
+
+„Darf User X in einer sichtbaren Funktion Aktion Y ausführen?“
+
+Feature Gating fragt:
+
+„Sieht User X diese Funktion überhaupt?“
+
+Beispiel:
+
+Feature Prompt-Vorlagen sichtbar
+Permission Prompt-Vorlagen teilen denied
+
+Dann sieht der User das Feature, aber nicht die Teilen-Aktion.
+
+Gating-Logik
+
+Das Prioritätsmodell bleibt:
+
+Ebene 1 — Deployment Default
+On
+Off
+Ebene 2 — User Override
+Default
+On
+Off
+Regel
+
+User Override gewinnt gegenüber dem Deployment-Default.
+
+Das entspricht exakt deiner Anforderung:
+Ein Feature kann global aus sein, aber für einzelne User trotzdem gezielt eingeschaltet werden.
+
+Wichtigste UX-Entscheidung
+Kein Checkbox-Haken für User-Overrides
+
+Für Feature Gating braucht ihr kein einfaches An/Aus pro User, sondern klar drei Zustände:
+
+Default
+On
+Off
+
+Deshalb sollte jede User-Override-Steuerung ein 3-State-Control sein.
+
+Nicht:
+
+Checkbox
+einfacher Toggle
+
+Sondern:
+
+klarer Segment-Switch oder 3-State Selector
+Empfohlener Screen-Aufbau
+Linke Hauptfläche: Feature-Katalog
+
+Liste oder Card-Ansicht aller gatebaren Features.
+
+Feature-Katalog als Hauptlogik
+
+Der Reiter ist featurezentriert, nicht userzentriert.
+
+Das heißt:
+
+zuerst siehst du die Features
+danach deren Deployment-Status
+danach die User-Ausnahmen
+Sinnvolle Cluster für Kolai
+
+Da in der Kolai-Oberfläche bereits mehrere klar abgegrenzte Produktbausteine sichtbar sind — Modellwahl, Projekt als Kontext, zusätzliche Kontexte, Reasoning, Prompt-Vorlagen, Projekte, Kontexte und Feedback — sollten die Feature-Gates entlang dieser Produktdomänen geclustert werden.
+
+1. Chat Core
+Chat
+Group Chats
+Sharing
+Feedback
+2. Prompting & Assets
+Prompt-Vorlagen
+Prompt-Bibliothek
+gespeicherte Prompts
+3. Kontext & Wissen
+Projekte
+Kontext-Auswahl
+zusätzliche Kontexte
+Kontexte-Verwaltung
+4. Model & AI Controls
+Modellwahl
+Reasoning
+Spezialmodelle / Modellmanagement-nahe Features
+5. Source / Connector Features
+Konnektoren nutzen
+Konnektoren hinzufügen
+SMB / Filesystem Zugriff
+Kontext-Freigaben
+Darstellung eines Features
+
+Jedes Feature als List Row oder Card mit:
+
+Feature-Name
+Kurzbeschreibung
+Cluster
+Deployment Toggle: On / Off
+Badge: x User Overrides
+optional Hinweis auf Abhängigkeiten
+Beispiel
+
+Reasoning
+Zusätzlicher Modus für komplexe Aufgaben
+Deployment: Off
+Overrides: 3
+
+Das passt sehr gut zur Produktlogik, weil Reasoning in Kolai bereits explizit als zuschaltbare Option für komplexe Fragestellungen beschrieben wird.
+
+Rechter Bereich / Drawer: User Overrides
+
+Klick auf ein Feature öffnet einen rechten Bereich oder Drawer.
+
+Inhalt
+Suchfeld für User
+Filter nach Gruppen
+Liste der relevanten User
+pro User:
+Default
+On
+Off
+
+Optional:
+
+Override für ganze Gruppe setzen
+danach Einzeluser feinsteuern
+Deployment Default + Ausnahmen sichtbar machen
+
+Im Feature-Detail oben immer klar sichtbar:
+
+Deployment default: Off
+Overrides: 12
+Effective visibility: 12 an / 184 aus
+
+So sieht man sofort:
+
+was global gilt
+wo Ausnahmen existieren
+Preview as User
+
+Das ist eines der stärksten UX-Elemente für diesen Reiter.
+
+Funktion
+Preview as user
+oder Show effective feature set
+
+Damit kann ein Admin sofort sehen:
+
+welche Oberfläche User X tatsächlich sieht
+welche Features aufgrund von Overrides sichtbar oder unsichtbar sind
+
+Gerade bei vielen Ausnahmen ist das extrem wertvoll.
+
+Abhängigkeiten zwischen Features
+
+Manche Features hängen logisch voneinander ab.
+
+Beispiel
+
+Wenn Chat off ist, dann sind faktisch auch diese Features nicht nutzbar:
+
+Modellwahl
+Reasoning
+zusätzliche Kontexte
+Prompt-Vorlagen
+UX-Regel
+
+Wenn ein Parent-Feature off ist:
+
+Child-Features nicht löschen
+aber visuell markieren als:
+abhängig
+derzeit nicht erreichbar
+
+So bleibt die Konfiguration erhalten, ohne verwirrend zu werden.
+
+Bulk-Management
+
+Für Owner-/Deployment-Steuerung braucht der Reiter gute Bulk-Aktionen:
+
+für ganzes Deployment aktivieren/deaktivieren
+für Gruppe als Override setzen
+User-Ausnahmen auf Default zurücksetzen
+später optional Presets:
+Basic Deployment
+Knowledge Worker
+Admin Full
+Pilot Features
+Was der Designer vermeiden sollte
+Feature Gating mit Checkboxen
+Permissions und Feature Gating im selben Screen vermischen
+reines Toggle-Board ohne Override-Logik
+keine Anzeige, wie viele User vom Default abweichen
+keine Gruppierung nach Feature-Domänen
+Kernidee für den UI-Designer
+
+Feature Gating ist ein featurezentrierter Verwaltungsbildschirm für Sichtbarkeit, nicht für Capability.
+Er soll produktnah, katalogartig und strategisch wirken.

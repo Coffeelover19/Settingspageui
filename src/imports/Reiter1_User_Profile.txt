@@ -1,0 +1,406 @@
+Reiter 1: User Profile
+Ziel des Reiters
+
+Der erste Einstellungs-Reiter ist der persönliche Account-Bereich des Users.
+Er soll nicht technisch, nicht administrativ und nicht überladen wirken.
+
+Er dient dazu, dass ein User:
+
+seine persönlichen Informationen sieht,
+seine persönlichen Präferenzen verwaltet,
+sein Profilbild verwaltet.
+Seitenstruktur
+
+Der Reiter wird in 3 Hauptabschnitte gegliedert:
+
+Persönliche Informationen
+Persönliche Präferenzen
+Profilbild
+
+Diese 3 Blöcke sollten als saubere Cards / Sektionen untereinander oder in einer ruhigen 2-Spalten-Logik aufgebaut sein.
+
+1. Persönliche Informationen
+Ziel
+
+Der User soll seine Identitätsdaten sehen und verstehen:
+
+was aus AD / Microsoft kommt,
+was nur angezeigt wird,
+was er selbst beeinflussen kann.
+Inhalte
+Vorname
+Nachname
+Username / Anzeigename
+E-Mail
+interne User ID
+Microsoft Active Directory ID / Microsoft User ID
+
+Da der Login laut eurer Produktschulung mit dem vorhandenen AD-User erfolgt, ist es sinnvoll, diese Herkunft im Profil explizit sichtbar zu machen.
+
+UX-Empfehlung
+
+Dieser Bereich sollte keine große Edit-Form sein, sondern eine read-only Info-Card mit klarer Struktur.
+
+Darstellung
+Card-Titel:
+
+Persönliche Informationen
+
+Zeilenstruktur:
+Vorname
+Nachname
+Username
+E-Mail
+Benutzer-ID
+Microsoft AD-ID
+Ergänzende UI-Hinweise
+
+Unterhalb der Daten ein kleiner Hinweistext:
+
+Einige Felder werden aus Microsoft Active Directory übernommen und können hier nicht geändert werden.
+
+Editierbarkeit
+Read-only:
+E-Mail
+User ID
+AD-ID
+Username, falls systemgeführt
+Optional später änderbar:
+Anzeigename, falls ihr so etwas wollt
+→ aktuell nehme ich das nicht als explizites Requirement auf
+2. Persönliche Präferenzen
+
+Dieser Bereich enthält alles, was das persönliche Verhalten der App für den einzelnen User beeinflusst.
+
+Für deinen aktuellen Scope gehören hier rein:
+
+Sprache
+Modellpräferenzen
+2.1 Sprache
+Ziel
+
+Der User kann seine bevorzugte Oberflächensprache einstellen.
+
+Da eine deutschsprachige Oberfläche in euren Anforderungen bereits explizit auftaucht, ist dieser Punkt absolut sinnvoll.
+
+UI-Empfehlung
+
+Wenn ihr am Anfang nur wenige Sprachen habt, ist kein großes Dropdown nötig.
+
+Besser:
+bei 2–3 Sprachen: Segmented Control
+bei vielen Sprachen: Dropdown
+Für den aktuellen Stand würde ich empfehlen:
+
+Deutsch | English
+
+Verhalten
+Änderung kann direkt gespeichert werden
+entweder sofort wirksam
+oder mit kleinem Hinweis:
+wird nach Reload angewendet
+oder wird sofort angewendet
+2.2 Modellpräferenzen
+
+Hier ist die wichtigste Korrektur aus deinem letzten Input:
+
+Nicht ein Dropdown im Dropdown
+
+Sondern:
+
+Dropdown 1 = Modellfamilien
+Dropdown 2 = Einzelmodelle
+
+Das ist eine gute und verständliche Lösung.
+
+Ziel dieses Bereichs
+
+Der User soll nicht das aktuelle Chat-Modell direkt hier auswählen — denn die aktive Modellwahl passiert laut eurer Produktschulung bereits direkt im Chat über das bestehende Model-Dropdown.
+
+Stattdessen soll dieser Bereich die persönliche Vorauswahl / Verfügbarkeit / Präferenz der Modelle steuern.
+
+Das heißt:
+
+welche Modellfamilien für den User relevant sind,
+welche Einzelmodelle innerhalb dieser Familien sichtbar sein sollen,
+welches Modell davon das persönliche Standardmodell ist.
+Aufbau des Modellbereichs
+
+Der Abschnitt Modellpräferenzen besteht aus 3 Elementen:
+
+Standardmodell
+Dropdown Modellfamilien
+Dropdown Einzelmodelle
+A. Standardmodell
+Zweck
+
+Der User kann festlegen, welches Modell standardmäßig vorausgewählt sein soll.
+
+Das ist nicht die exklusive Auswahl, sondern die persönliche Default-Auswahl.
+
+UI
+
+Ein einzelnes Dropdown:
+
+Standardmodell
+
+GPT-5.1
+GPT-5.1 Mini
+Mistral Large
+DeepSeek …
+etc.
+UX-Hinweis
+
+Nur Modelle anzeigen, die im zweiten Dropdown auch tatsächlich für den User freigegeben sind.
+
+B. Dropdown 1 — Modellfamilien
+Zweck
+
+Hier wählt der User aus, welche Modellfamilien er grundsätzlich verfügbar haben möchte.
+
+Beispielwerte
+OpenAI
+Mistral
+DeepSeek
+xAI
+Meta
+weitere
+
+Dass mehrere Modellfamilien relevant sind, ist in euren Unterlagen bereits fachlich angelegt; dort werden u. a. OpenAI, Mistral, DeepSeek und xAI nebeneinander dargestellt.
+
+UI-Verhalten
+
+Dieses Dropdown ist multi-select.
+
+Der User kann also mehrere Familien gleichzeitig auswählen.
+
+Beispiel:
+OpenAI
+Mistral
+DeepSeek
+Darstellung
+
+Empfohlen ist ein Multi-Select-Dropdown mit:
+
+Checkboxen
+Suchfunktion, falls viele Familien vorhanden sind
+ausgewählte Werte als Chips / Tags im Input
+Beispiel:
+
+OpenAI, Mistral, DeepSeek
+
+C. Dropdown 2 — Einzelmodelle
+Zweck
+
+Dieses Dropdown zeigt nur die Modelle an, die aus den im ersten Dropdown ausgewählten Familien stammen.
+
+Das ist die wichtigste Abhängigkeit:
+
+Dropdown 2 ist gefiltert durch Dropdown 1.
+
+Beispiel
+
+Wenn in Dropdown 1 ausgewählt wurde:
+
+OpenAI
+Mistral
+
+Dann zeigt Dropdown 2 nur noch Modelle wie:
+
+GPT-5.1
+GPT-5.1 Mini
+GPT-4.x
+Mistral Large
+Mistral Small
+
+Aber eben nicht:
+
+DeepSeek-Modelle
+xAI-Modelle
+Meta-Modelle
+UI-Verhalten
+
+Auch dieses Dropdown ist multi-select.
+
+Der User kann darin die konkreten Einzelmodelle auswählen, die ihm in der Produktoberfläche angeboten werden sollen.
+
+Darstellung
+
+Empfohlen:
+
+Multi-Select-Dropdown mit Checkboxen
+Search
+Chips / Tags für ausgewählte Modelle
+Logik zwischen den beiden Dropdowns
+Regel 1
+
+Wenn keine Modellfamilie ausgewählt ist, ist Dropdown 2:
+
+deaktiviert
+oder leer
+Regel 2
+
+Wenn Familien geändert werden, werden die Modelle in Dropdown 2 automatisch neu gefiltert.
+
+Regel 3
+
+Falls ein User bereits ein Modell ausgewählt hatte und die zugehörige Familie später abwählt, dann wird dieses Modell automatisch aus der Einzelmodell-Auswahl entfernt.
+
+Regel 4
+
+Das Standardmodell darf nur aus den tatsächlich ausgewählten Einzelmodellen stammen.
+
+Empfohlene UI-Struktur für den gesamten Modellbereich
+Card-Titel:
+
+Modellpräferenzen
+
+Inhalte:
+1. Standardmodell
+Single Select Dropdown
+2. Modellfamilien
+Multi Select Dropdown
+3. Einzelmodelle
+Multi Select Dropdown
+gefiltert durch Modellfamilien
+Optionale Microcopy unterhalb
+
+Wähle zuerst die Modellfamilien aus. Anschließend kannst du die konkreten Modelle innerhalb dieser Familien auswählen.
+
+Das passt gut zu eurer bestehenden Produktlogik, in der Modelle heute schon direkt im Chat auswählbar sind und unterschiedliche Modelltypen nebeneinander vorkommen.
+
+Warum diese Lösung UX-seitig gut ist
+Sie ist klarer als:
+ein verschachteltes Dropdown
+eine riesige Checkbox-Liste
+ein Modal mit zu vielen Ebenen
+Sie ist gut, weil:
+die Logik sofort verständlich ist
+die Abhängigkeit sichtbar ist
+sie bei mehr Modellen skalierbar bleibt
+Power User filtern können, ohne normale User zu überfordern
+3. Profilbild
+Ziel
+
+Der User kann sehen, woher sein Profilbild kommt, und es bei Bedarf ersetzen.
+
+Gewünschte Logik
+Standard: Bild kommt aus AD / Microsoft
+wenn kein Bild geliefert wird: Placeholder / leerer Avatar
+dann kann der User selbst ein Bild hochladen
+UI-Aufbau
+Card-Titel:
+
+Profilbild
+
+Inhalte
+großer Avatar-Preview
+Statuszeile:
+Aus Microsoft-Profil übernommen
+oder Kein Microsoft-Profilbild gefunden
+oder Eigenes Bild hochgeladen
+Aktionen
+Wenn Microsoft-Bild vorhanden:
+Eigenes Bild hochladen
+Auf Microsoft-Bild zurücksetzen
+Wenn kein Microsoft-Bild vorhanden:
+Bild hochladen
+Wenn eigenes Bild gesetzt wurde:
+Bild ersetzen
+Bild entfernen
+Auf Microsoft-Bild zurücksetzen falls vorhanden
+Gesamtaufbau der Seite
+Reiter: User Profile
+Abschnitt 1 — Persönliche Informationen
+Vorname
+Nachname
+Username
+E-Mail
+interne User ID
+Microsoft AD-ID
+read-only Hinweis
+Abschnitt 2 — Persönliche Präferenzen
+Sprache
+Deutsch / Englisch / weitere
+Modellpräferenzen
+Standardmodell
+Dropdown 1: Modellfamilien
+Dropdown 2: Einzelmodelle
+Abhängigkeit zwischen beiden Dropdowns
+Abschnitt 3 — Profilbild
+Avatar-Preview
+Herkunft des Bilds
+Upload / Ersetzen / Entfernen / Zurücksetzen
+Speichern / Interaktionslogik
+Meine Empfehlung
+
+Für diese Seite ist ein hybrider Save-Ansatz am sinnvollsten:
+
+Sofort speichern
+
+für:
+
+Sprache
+Profilbild
+Save-Bar / Save-Button
+
+für:
+
+Modellpräferenzen
+
+Denn bei den Modellpräferenzen kann der User mehrere Dinge in Folge ändern:
+
+Familien
+Modelle
+Standardmodell
+
+Das sollte erst gesammelt gespeichert werden.
+
+Empfohlene Logik
+
+Wenn Modellpräferenzen geändert werden:
+
+Sticky Bar oder Card-interner Footer:
+Änderungen speichern
+Verwerfen
+Was der UI-Designer ausdrücklich beachten sollte
+Der Reiter soll sich anfühlen wie:
+persönlich
+ruhig
+verständlich
+nicht technisch
+nicht wie ein Admin-Panel
+Deshalb:
+Cards statt Tabellen
+klare Trennung zwischen read-only und editierbar
+wenig visuelle Komplexität
+Modellbereich logisch, aber nicht überladen
+kein verschachteltes Dropdown
+keine riesige Formularseite
+Klare Spezifikation für den Designer / Dev
+Kurzfassung
+
+Der Reiter User Profile besteht aus drei Bereichen:
+
+1. Persönliche Informationen
+
+Read-only Identitätsdaten aus AD / Microsoft:
+
+Vorname
+Nachname
+Username
+E-Mail
+interne User ID
+Microsoft AD-ID
+2. Persönliche Präferenzen
+Sprache
+Modellpräferenzen
+Modellpräferenzen mit 3 Feldern:
+Standardmodell (Single Select)
+Modellfamilien (Multi Select)
+Einzelmodelle (Multi Select, abhängig von Modellfamilien)
+3. Profilbild
+Anzeige der Bildquelle
+Upload bei fehlendem Bild
+lokales Überschreiben des AD-Bildes
+Rücksetzen auf AD-Bild

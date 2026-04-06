@@ -1,0 +1,168 @@
+Unten ist eine ausführliche, implementierungsnahe Spezifikation für den Baustein “SMB / Filesystem (Server Message Block) – Pfad-Konfiguration (Include/Exclude)”. Geschrieben so, dass ein Frontend-Dev sofort versteht wie es aussehen soll, wie es funktionieren soll, welche States es gibt und welche Datenstrukturen er braucht – ohne dass wir jetzt schon auf eine konkrete Code-Implementation festgenagelt sind.
+
+1) Ziel & Nicht-Ziele
+Ziel
+
+Admins sollen visuell definieren können, welche Bereiche eines SMB-Dateisystems (Ordnerpfade) in Kolai eingeschlossen (Whitelist/Include) oder ausgeschlossen (Blacklist/Exclude) werden – inklusive Overrides:
+
+Beispiel:
+
+Include: D:\Modelle\manifests\registry.ollama.ai\library\**
+Exclude: D:\Modelle\manifests\registry.ollama.ai\library\tinyllama\**
+
+Dann muss klar sichtbar sein:
+
+...\library ist Included (mit Ausnahme)
+...\tinyllama ist Excluded, obwohl Parent included ist
+Nicht-Ziele (harte UX-Constraints)
+Keine File-Operationen: kein Umbenennen, kein Löschen, kein Verschieben, kein Upload/Download.
+Keine “Echtzeit”-Monitoring-Ansprüche hier.
+Fokus: Konfiguration + Nachvollziehbarkeit.
+2) Screen-Struktur (1 Seite, lean, max. 2–3 Klicks)
+Empfohlenes Layout (drei Zonen)
+
+A) Tree Panel (links, Hauptinteraktion)
+
+Ordnerbaum (lazy geladen)
+Expand/Collapse
+Pro Node: Name + Status-Indikator + Aktionen (Include/Exclude)
+
+B) Kontext-/Scope-Controls (oben)
+
+Dropdown: “Kontext auswählen” (falls ihr mehrere Kontexte habt, sehr wahrscheinlich)
+Optional: Suchfeld “Jump to path”
+Optional: Toggle “Show only configured paths” (für große Trees)
+
+C) Rules / Selected Paths Panel (rechts, Source of Truth)
+
+Liste aller aktiven Regeln:
+Typ: Include/Exclude
+Pfad
+Scope: “subtree” (**) (MVP: nur subtree)
+Entfernen/Deaktivieren
+Vorteil: Admin sieht sofort, was tatsächlich konfiguriert ist, ohne im Tree rumzusuchen.
+
+Footer / Sticky Bar
+
+“Unsaved changes” Hinweis
+Buttons: Review changes → Apply/Save / Discard
+3) Interaktionsmodell: “2 Buttons (Include/Exclude) + Bestätigung”
+Grundidee
+
+Der Admin navigiert im Tree zu einem Pfad und kann dort:
+
+Include subtree (grün)
+Exclude subtree (rot)
+Optional (sehr empfohlen): Clear explicit rule (zurück auf “Inherited/Neutral”)
+Bestätigung
+
+Dein Wunsch “am Ende nochmal bestätigen” wird so umgesetzt:
+
+Klick auf Include/Exclude setzt die Regel lokal im UI (pending state)
+Sticky bar zeigt “X unsaved changes”
+Admin klickt Review changes (Modal/Drawer)
+Dann Apply/Save
+
+So vermeidest du “oops, ich habe gerade alles kaputt geklickt”.
+
+4) Status-Logik (entscheidend, damit Overrides sauber funktionieren)
+Datenmodell (Rules)
+
+Statt jeden Node dauerhaft zu markieren (unskalierbar) speichert ihr nur Regeln:
+
+type Rule = {
+  id: string
+  type: "include" | "exclude"
+  path: string              // normalisiert, z.B. "D:\...\library"
+  scope: "subtree" | "exact" // MVP: nur subtree
+  enabled: boolean
+}
+Regelauflösung (“deepest wins”)
+
+Für einen beliebigen Node-Pfad P gilt:
+
+Finde alle Regeln, deren path ein Prefix von P ist (bei subtree) oder exakt matcht (exact).
+Nimm die spezifischste Regel = die mit dem längsten path (tiefster Ordner).
+Diese Regel bestimmt effectiveState:
+include → Included
+exclude → Excluded
+Wenn keine Regel matcht → Neutral (oder “Inherited none”)
+Partial / Indeterminate (für Parents)
+
+Ein Ordner kann “Included” sein, aber darunter existieren Excludes.
+Dann ist der Parent Partial.
+
+Definition Partial:
+
+effectiveState(parent) == Included
+UND es gibt mindestens einen descendant mit effectiveState == Excluded (oder abweichend)
+
+Das ist wichtig für UX: Parent wird nicht “grün voll”, sondern “grün + Hinweis”.
+
+5) Visuelle Darstellung (wie es konkret aussehen soll)
+A) Farbe & Linien (dein Wunsch)
+
+Du willst “am besten rot oder grüne Linie entlang des Pfades”.
+
+Konkreter Vorschlag für Node-Rendering:
+
+Links neben dem Node-Label eine vertikale Status-Leiste (2–4px):
+Grün = Included
+Rot = Excluded
+Gemischt/gelb/orange oder “half-fill” = Partial (Included mit Excludes darunter)
+Grau/transparent = Neutral
+Zusätzlich kleines Icon neben dem Namen:
+✅ (include)
+⛔ (exclude)
+◐ (partial)
+Tooltip/Side panel “Reason” (optional, aber sehr hilfreich):
+“Included by rule: …\library**”
+“Excluded by rule: …\tinyllama**”
+B) Actions sichtbar, nicht versteckt
+
+Pro Node:
+
+2 Buttons oder ein Split-Button:
+Include (grün)
+Exclude (rot)
+Optional: drei-Punkte-Menü für “Clear explicit rule”
+
+Lean Rule: Buttons erscheinen z.B. bei Hover oder bei Selection (Node angeklickt), aber nicht komplett versteckt im 5. Menü.
+
+7) Edge Cases (damit UX robust bleibt)
+A) Duplicate / Conflicting Rules
+Wenn User auf einem Pfad, der schon “Include subtree” hat, nochmal “Include” klickt:
+entweder no-op (Toast: “Already included”)
+oder du setzt “pending” als unverändert → keine neue Änderung
+B) Exclude unter Include (dein Hauptcase)
+Muss gehen, klar sichtbar:
+Parent: partial
+Child: exclude
+C) Include unter Exclude (Reverse override)
+
+Sollte auch möglich sein (deepest wins):
+
+Exclude ...\library\**
+Include ...\library\keep\**
+Dann:
+library = excluded/partial (je nach Darstellung)
+keep = included
+D) Clear explicit rule
+
+9)Ein Frontend-Dev soll “frei wählen” können, solange diese Anforderungen erfüllt sind:
+
+Option 1: React Arborist
+Sehr flexibel für Custom Node Rendering (Status-Leisten, Buttons, Icons)
+Gut für “Tree + per-node actions” und Virtualization
+Du implementierst deine State-Logik selber (was du sowieso brauchst)
+Option 2: MUI X Tree View / Rich Tree View
+Gute Basis, wenn ihr ohnehin MUI nutzt
+Custom Render möglich, aber teils mehr “Framework-Konventionen”
+Tri-State kann, aber euer Include/Exclude ist eher “dual action” als Checkbox
+Option 3: Syncfusion TreeView
+Viele Enterprise Features out-of-the-box
+Aber Lizenz/Bundle/Styling-Fit prüfen
+Tri-State nativ; für “Include/Exclude” braucht ihr meist trotzdem Custom States
+
+
+

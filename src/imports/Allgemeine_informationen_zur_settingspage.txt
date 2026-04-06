@@ -1,0 +1,273 @@
+Allgemeine informationen zu Settingspage:
+Finaler genereller Aufbau der Settings-Seite
+Grundstruktur
+
+Wenn man unten links in der Sidebar auf das Zahnrad klickt, öffnet sich keine neue App, sondern eine Settings-Hauptfläche rechts neben der persistenten Sidebar.
+
+Die Struktur ist:
+
+links: bestehende Kolai-Sidebar, immer sichtbar
+rechts: Settings-Content
+oben im Content: horizontale Reiter-Navigation
+darunter: der jeweilige Reiter-Inhalt in Cards / Panels / Sektionen
+
+Das ist aus UX-Sicht richtig, weil eure App schon heute klar aus Navigation links + Arbeitsfläche rechts besteht.
+
+Finale Reihenfolge der Reiter
+1. User Profile
+
+Persönliche Daten, Sprache, Modellpräferenzen, Profilbild.
+
+2. Org Management
+
+Organisationsweite Standards und Limits, aktuell:
+
+Model Policies
+Prompt Standards
+3. SMB Config
+
+Fileserver-/SMB-Konfiguration mit Include/Exclude-Logik für Pfade.
+
+4. Monitoring
+
+Management- und Systemstatus-Dashboard.
+
+5. Billing
+
+Subscription-, Lizenz- und Zusatzkostenübersicht.
+
+6. Permissions
+
+Feingranulare Berechtigungen für User und Gruppen.
+
+7. Feature Gating
+
+Sichtbarkeit von Features pro Deployment und User.
+
+Diese Reihenfolge ist sinnvoll, weil sie vom persönlichen Bereich über organisationsweite Standards in die operative Admin-Welt übergeht:
+
+erst ich selbst,
+dann mein Organisationsrahmen,
+dann Systemkonfiguration,
+dann Betrieb/KPIs,
+dann Governance/Access.
+Informationsarchitektur der Seite
+Oben: Settings Header
+
+Ganz oben in der rechten Fläche ein ruhiger Kopfbereich:
+
+Titel: Settings
+darunter ein kurzer Untertitel, z. B.
+Persönliche, organisatorische und administrative Einstellungen für dieses Deployment
+
+Rechts oben optional:
+
+Theme Toggle
+Hilfe / Info
+ggf. Search später, aber nicht in V1 nötig
+Direkt darunter: horizontale Reiterleiste
+
+Die Reiter liegen sauber nebeneinander in einer horizontalen Navigation.
+
+Verhalten
+Desktop: alle 7 Reiter sichtbar in einer Linie
+kleinere Breiten: horizontal scrollbar
+aktive Tab klar markiert
+kein zweizeiliger Umbruch, wenn vermeidbar
+Tabs dürfen sticky sein, wenn man im Inhalt scrollt
+Visuelle Designrichtung
+
+Du willst:
+
+hochwertig
+professionell
+modern
+viel White Space, aber nicht zu viel
+passend zur bestehenden Kolai-Oberfläche
+Light und Dark Mode
+Mein klares Designurteil
+
+Die Settings sollten sich anfühlen wie:
+
+Enterprise SaaS + modern product polish
+
+Also nicht:
+
+verspielt
+zu futuristisch
+zu viel Glassmorphism
+zu viel Fintech-Glow
+
+Sondern:
+
+klar
+elegant
+ruhig
+hochwertig
+glaubwürdig
+Stilprinzipien
+1. White Space
+
+Großzügig, aber kontrolliert.
+
+Empfehlung
+Hauptaußenabstände: 24–32 px
+Card-Padding: 24 px
+große Sektionen: 32 px Abstand
+Controls innerhalb Cards: 12–16 px
+nicht zu eng, aber auch keine riesigen Leerflächen
+
+Das Ziel ist:
+
+Luft
+Lesbarkeit
+Fokus
+Professionalität
+2. Oberflächen / Cards
+
+Der Inhalt der Reiter sollte nicht frei im weißen Raum schweben, sondern in klaren, hochwertigen Cards / Panels organisiert sein.
+
+Card-Stil
+Radius: 16 px
+Border: sehr subtil
+Shadow: weich, niedrig
+Light Mode: hell, ruhig, fast weiß
+Dark Mode: anthrazit, leicht angehoben
+Wirkung
+modern
+ruhig
+hochwertig
+konsistent mit Kolai
+3. Glassmorphism
+
+Ja, aber nur sehr dezent.
+
+Wo sinnvoll
+bei der Reiterleiste
+bei Header-Flächen
+bei Drawer/Modal
+bei Summary-Cards
+Wo nicht
+bei dichten Formularen
+bei Permissions
+bei SMB Tree
+bei datenlastigen Tabellen
+Mein Rat
+
+Nicht „echtes“ starkes Glassmorphism, sondern eher:
+
+leichte Transluzenz
+sanfter Blur
+feine Border
+nur als hochwertiger Surface-Effekt
+
+Also eher Soft Glass als „wow, transparent“.
+
+Light Mode / Dark Mode
+Light Mode
+
+Angelehnt an deinen Screenshot:
+
+Hintergrund: sehr helles Grau
+Cards: weiß bis minimal getönt
+Text: dunkles Grau statt hartes Schwarz
+Primärfarbe: Kolai-Blau
+aktive Zustände: klares, aber nicht aggressives Blau
+
+Das passt auch zur Schulungsdarstellung, in der Kolai mit klarer blauer Markenführung und heller Arbeitsfläche auftritt.
+
+Dark Mode
+Hintergrund: tiefes Anthrazit
+Cards: eine Nuance heller
+Borders: kühl und fein
+aktive Reiter / Buttons: satter Blauton
+Hover: subtil heller
+Wichtig
+
+Dark Mode darf nicht einfach invertiert wirken.
+Er soll dieselbe Wertigkeit haben wie Light Mode.
+
+Verhalten und Responsiveness
+Desktop
+Sidebar links fix
+Content rechts flüssig
+maximale inhaltliche Breite: ca. 1280–1360 px
+Reiter oben horizontal
+Inhalte in 1- oder 2-Spalten-Raster, je nach Reiter
+Laptop / kleinere Desktop-Breiten
+Tabs horizontal scrollbar
+Cards kompakter
+2-Spalten-Layouts können auf 1 Spalte umbrechen
+Tablet
+Sidebar einklappbar oder schmaler
+Reiter horizontal scrollable
+Inhalte fast nur 1-spaltig
+Mobile
+
+Wenn ihr mobile wirklich unterstützt:
+
+Sidebar als Drawer
+Tabs als horizontale Scroll-Leiste
+alles untereinander
+keine komplexen Tabellen als Primärlayout
+Einheitliches Muster pro Reiter
+
+Jeder Reiter sollte gleich aufgebaut sein:
+
+1. Reiter-Header
+Titel
+1 Satz Beschreibung
+2. Summary / Top Block
+
+Wenn sinnvoll:
+
+kurze Übersicht
+kleine Status-/KPI-/Meta-Info
+3. Hauptinhalt
+in Cards/Sektionen gegliedert
+mit klarer visueller Hierarchie
+4. Save-Logik
+sofort speichern bei kleinen Präferenzen
+Save Bar bei komplexeren Änderungen
+
+Dieses Muster sorgt dafür, dass sich die Settings-Seite wie ein durchgängiges System anfühlt.
+
+Wie sich die 7 Reiter visuell anfühlen sollten
+1. User Profile
+
+Persönlich, ruhig, freundlich.
+Mehr Profil-/Preference-Gefühl als Admin-Konsole.
+
+2. Org Management
+
+Etwas strategischer, aber immer noch reduziert.
+Wenig Inhalt, klare Defaults und Limits.
+
+3. SMB Config
+
+Technischer, strukturierter, sachlicher.
+Mehr Utility-Charakter, weniger “soft”.
+
+4. Monitoring
+
+Dashboard-artig, KPI-orientiert, managementtauglich.
+Karten + Charts + Warnungen.
+
+5. Billing
+
+Kaufmännisch ruhig, nicht buchhalterisch.
+Plan, Lizenzen, Kontingente, Zusatzkosten.
+
+6. Permissions
+
+Präzise, kontrolliert, eher systemisch.
+Klar gruppiert, mit guter Herkunftslogik.
+
+7. Feature Gating
+
+Produktnah, katalogartig, strategisch.
+Sichtbarkeit statt feingranularer Rechte.
+
+Mein finaler Designvorschlag in einem Satz
+
+Die Settings von Kolai sollten als hochwertige, moderne zweite Navigationsebene innerhalb der bestehenden App erscheinen: mit persistenter Sidebar links, einer klaren horizontalen Reiterleiste oben, großzügigen aber kontrollierten Abständen, weichen Cards, subtilen Glass-Effekten und einem konsistenten Light-/Dark-Mode-System.

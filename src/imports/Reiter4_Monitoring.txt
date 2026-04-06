@@ -1,0 +1,338 @@
+3. Die richtige Grundstruktur für Monitoring
+
+Ich würde den Reiter in 5 klar getrennte Bereiche schneiden:
+
+Executive Summary
+Produktnutzung
+Pipelines & Datenverarbeitung
+System Health & Warnungen
+Feedback & Qualitätsindikatoren
+
+Optional darunter:
+6. Aktivitäts-/Trendbereich mit Diagrammen
+
+4. Zeitlogik
+
+Du hast folgende Zeiträume genannt, und das ist sehr sinnvoll:
+
+Heute
+Letzte 7 Tage
+Aktueller Monat
+Letzter Monat
+Letzte 3 Monate
+UX-Empfehlung
+
+Oben rechts als Time Range Selector:
+
+Heute | 7 Tage | Aktueller Monat | Letzter Monat | 3 Monate
+
+Wichtige Regel
+Die KPI-Karten oben aktualisieren sich nach dem gewählten Zeitraum.
+Darunter dürfen einzelne Widgets ihre eigene Logik haben:
+z. B. Incident Feed = letzte 7 Tage
+Monatschart = letzte 3 Monate
+5. Gesamt-Layout des Reiters
+Oben: Executive Summary
+
+Eine erste Zeile mit 6–8 KPI-Karten
+
+Mitte: 2–3 Dashboard-Abschnitte
+Nutzung
+Pipelines
+Health / Warnungen
+Unten: Diagramme / Verläufe / Feedback
+Trends
+offene Probleme
+qualitative Signale
+6. Bereich A — Executive Summary
+
+Hier sollen die wichtigsten Kennzahlen rein, die ein Owner oder Admin in 10 Sekunden erfassen kann.
+
+Meine klare Empfehlung für die Top-KPIs
+1) Aktive Nutzer
+heute
+im gewählten Zeitraum
+2) Anzahl Chats
+total im Zeitraum
+3) Verarbeitete Dokumente
+bereits analysiert
+4) Offene Dokumente / offene Pipeline-Items
+noch nicht verarbeitet / pending
+5) Systemstatus
+Healthy / Warning / Incident
+6) Offene Warnungen / Fehler
+Anzahl
+7) Neues Feedback
+Anzahl im Zeitraum
+8) Offene Feedback-Fälle
+noch nicht geschlossen
+
+Diese Auswahl passt gut zur tatsächlichen Produktnutzung: Kolai arbeitet im Alltag über Chats, Projekte, Kontexte, Konnektoren und Dokumentquellen; dazu gibt es explizit einen Feedback-Button für Fehler, Performance-Probleme und Funktionswünsche.
+
+UI-Form
+kompakte Cards
+sehr ruhig
+nur Warnfarben, wenn etwas problematisch ist
+
+Beispiel:
+
+Aktive Nutzer: 48
+Chats: 912
+Dokumente analysiert: 14.230
+Dokumente offen: 183
+Systemstatus: Warning
+Offene Warnungen: 4
+Neues Feedback: 9
+Offene Feedback-Fälle: 21
+7. Bereich B — Produktnutzung
+
+Dieser Bereich beantwortet:
+Wie stark wird Kolai tatsächlich genutzt?
+
+Da eure Produktschulung die zentralen Bausteine klar sichtbar macht — Landing Page / neuer Chat, Projekte, Kontexte, Web Search, Reasoning, Konnektoren, Prompt-Vorlagen, Feedback — sollte Monitoring genau darauf aufsetzen.
+
+Empfohlene KPI-Cluster
+1) User Activity
+aktive Nutzer
+neue Nutzer im Zeitraum
+wiederkehrende Nutzer
+durchschnittliche Sessions pro Nutzer
+2) Chat Activity
+Anzahl Chats
+Anzahl Nachrichten / Prompts
+Durchschnittliche Chats pro aktivem Nutzer
+durchschnittliche Antwortanzahl je Chat
+3) Feature Adoption
+Nutzung von Projekten
+Nutzung von Kontexten
+Nutzung von Prompt-Vorlagen
+Nutzung von Group Chats
+Nutzung von Web Search
+Nutzung von Reasoning
+Nutzung von Konnektoren
+Warum das stark ist
+
+Du bekommst nicht nur “es wird genutzt”, sondern:
+
+welche Teile des Produkts genutzt werden
+welche Features eventuell zwar gebaut, aber kaum angenommen sind
+Empfohlene Visualisierung
+Für Volumina / Entwicklungen
+Liniendiagramm für zeitliche Entwicklung
+z. B. aktive Nutzer oder Chats pro Tag
+Für Feature-Anteile
+horizontale Balkendiagramme
+besser als Kuchendiagramme, weil Vergleich leichter ist
+Für Verteilung
+optional Donut nur bei 2–4 Kategorien
+z. B. Anteil Chattypen oder Anteil genutzter Features
+aber nicht überall Donuts einsetzen
+8. Bereich C — Pipelines & Datenverarbeitung
+
+Das ist bei euch ein zentraler Teil, weil Kolai mehr ist als ein Chat: Es hängt an Dokumentverarbeitung, Kontextaufbau und Datenquellen. Eure Unterlagen beschreiben Kontexte als kuratierte Wissenscontainer, die über „Add Source“ erweitert und im Preview geprüft werden. Administratoren können zusätzliche Konnektoren aktivieren, um weitere Datenquellen einzubinden.
+
+Ziel dieses Bereichs
+
+Er beantwortet:
+
+Kommen Dokumente und Quellen sauber rein?
+Hängen Verarbeitungsschritte?
+Gibt es Rückstau?
+Wo entstehen Fehler?
+Empfohlene KPI-Gruppen
+1) Dokumentenpipeline
+insgesamt analysierte Dokumente
+neu eingegangene Dokumente
+offene / pending Dokumente
+fehlgeschlagene Analysen
+durchschnittliche Verarbeitungszeit
+2) Kontext-/Quellen-Pipeline
+neu angelegte Kontexte
+Kontext-Updates
+Anzahl hinzugefügter Quellen
+fehlerhafte Quellen / fehlerhafte Imports
+3) Connector-/Datenquellenstatus
+aktive Konnektoren
+erfolgreiche Syncs
+fehlgeschlagene Syncs
+letzter erfolgreicher Lauf
+Quellen mit Warnstatus
+Visualisierung
+Pipeline-Funnel oder Status-Kacheln
+
+Für Dokumente z. B.:
+
+eingegangen
+verarbeitet
+offen
+fehlgeschlagen
+Balken / Status Rows
+
+Für Konnektoren:
+
+O365: healthy
+SMB: warning
+DMS: failed last run
+Sehr wichtig
+
+Hier solltest du keine DevOps-Telemetrie bis ins Tiefste zeigen.
+Nicht CPU-Auslastung, RAM, Container-Metriken als Hauptsicht.
+Sondern die betriebsrelevanten Produktpipelines, also das, was ein Admin fachlich versteht.
+
+9. Bereich D — System Health & Warnungen
+
+Das ist die klassische “läuft alles?”-Sicht.
+
+Du hast selbst gesagt:
+
+Ausfälle
+Fehler
+Warnungen
+Statussignale
+sollen sichtbar sein.
+
+Das passt auch zu euren internen Erfolgsfaktoren: Dort werden Online-Telemetry, Rollback-Mechanismen, Audit-Trails und Governance-/Policy-Themen explizit genannt.
+
+Empfehlung: eigener Health-Block
+Nicht nur als einzelne Zahl oben
+
+Sondern ein klar sichtbarer Bereich mit:
+
+Overall System Status
+aktive Warnungen
+letzte Incidents
+Pipelines mit Fehlerstatus
+Konnektoren mit Fehlerstatus
+Mögliche Statuslogik
+Healthy
+Warning
+Critical
+Typische Meldungen, die dort auftauchen sollten
+SMB-Sync fehlgeschlagen
+O365-Konnektor nicht erreichbar
+Dokumentenpipeline blockiert
+OCR / Document Intelligence verzögert
+Modellendpoint nicht erreichbar
+Importfehler bei Quelle X
+ungewöhnlich hohe Fehlerrate
+UI-Empfehlung
+A) Status Summary Card
+gesund / Warnung / kritisch
+Anzahl offener Probleme
+B) Incident Feed / Warning List
+
+Liste mit:
+
+Titel
+Kategorie
+betroffenes System
+Zeitstempel
+Status
+Severity
+C) Quick Filter
+alle
+kritisch
+Warnungen
+nur offen
+
+10. Bereich E — Feedback & qualitative Signale
+
+Nicht nur “System läuft”, sondern auch:
+Wie wird das Produkt subjektiv erlebt?
+
+KPI-Vorschlag
+neues Feedback im Zeitraum
+offenes Feedback
+geschlossene Feedback-Fälle
+
+Visualisierung
+Kuchen oder donut
+
+12. Welche Diagrammtypen ich empfehlen würde
+
+Du hattest gefragt, was für welche Daten sinnvoll ist.
+
+Meine klare Empfehlung
+Liniendiagramm
+
+Für:
+
+aktive Nutzer über Zeit
+Chats über Zeit
+Dokumentenverarbeitung über Zeit
+Fehlerrate über Zeit
+Gestapelte Balken
+
+Für:
+
+Dokumentenstatus: verarbeitet / offen / fehlgeschlagen
+Feedback-Kategorien
+Feature-Nutzung je Zeitraum
+Donut / Pie
+
+Nur sparsam:
+
+Anteil Feedback-Kategorien
+Anteil Chattypen
+Anteil Feature-Nutzung bei wenigen Kategorien
+Status-Tables / Event Lists
+
+Für:
+
+Warnungen
+Konnektor-Status
+letzte Incidents
+offene Feedback-Fälle
+UX-Regel
+
+Ein Admin-Dashboard sollte nicht diagrammverliebt sein.
+Erst klare KPIs, dann 3–5 wirklich sinnvolle Visuals.
+
+13. Mein empfohlener finaler Screen-Aufbau
+Header
+Titel: Monitoring
+Untertitel: Nutzung, Pipelines und Systemstatus
+Zeitraum rechts: Heute | 7 Tage | Aktueller Monat | Letzter Monat | 3 Monate
+Row 1 — Executive Summary
+Aktive Nutzer
+Chats
+Dokumente analysiert
+Dokumente offen
+Systemstatus
+offene Warnungen
+neues Feedback
+offenes Feedback
+Row 2 — Zwei Spalten
+Links: Produktnutzung
+aktive Nutzer Verlauf
+Chats Verlauf
+Feature Adoption
+Rechts: Pipelines
+Dokumentenpipeline Status
+offene Verarbeitungen
+fehlerhafte Analysen
+Konnektor-/Sync-Status
+Row 3 — Zwei Spalten
+Links: Health & Warnings
+Overall Health
+Incident Feed
+offene Warnungen nach Severity
+Rechts: Feedback & Qualität
+Feedback-Kategorien
+offene Feedback-Fälle
+Answer with Source
+Self Solve Rate
+ggf. Time to Answer
+
+15. Was ein UI-Designer ausdrücklich vermeiden sollte
+zu technische Ops-Sicht als Default
+CPU/RAM/Containerzahlen als Hauptfokus
+12 verschiedene Charts ohne Priorisierung
+Billing-/Kostenzahlen in denselben Haupt-Widgets
+reine Tabellen ohne visuelle Priorisierung
+Qualitätsmetriken ohne belastbare Datengrundlage
+Feedback als separater Fremdkörper statt Teil des Monitoring-Systems
+
+16. Mein klares Zielkonzept in einem Satz
+
+Monitoring in Kolai sollte als managementorientiertes Betriebs- und Nutzungsdashboard aufgebaut sein, das Produktadoption, Dokumenten-/Kontextpipelines, System Health, Warnungen und Feedback auf einen Blick sichtbar macht — mit wenigen starken KPIs oben und vertiefenden Diagrammen darunter.

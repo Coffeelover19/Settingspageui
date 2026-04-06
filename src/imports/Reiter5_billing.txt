@@ -1,0 +1,464 @@
+Billing-Reiter für Kolai
+
+Zielbild: kein Rechnungsarchiv, keine Buchhaltung, keine PDFs.
+Billing ist ein lesender Subscription- und Cost-Overview-Reiter für Admins und Owners, der in kurzer Zeit beantwortet:
+
+Welches Setup / welche Vertragslogik hat dieses Deployment?
+Welche Pakete / Module sind aktiv?
+Wie viele Lizenzen sind gekauft, vergeben und noch frei?
+Welche Inklusivkontingente gibt es und wie weit sind sie verbraucht?
+Welche zusätzlichen monatlichen Kosten fallen aktuell an?
+
+Das passt gut zu euren internen Unterlagen: Dort tauchen bereits lizenzbasierte Modelle, Cloud/On-Prem-Varianten, tokenbasierte Zusatzlogiken und inkludierte Token-Guthaben pro Nutzer auf. Außerdem werden modulare Lösungsbausteine wie ToDo Manager, Onboarding-Agent, graphenbasierte Suche und Generatoren/Agents als separate Angebots-/Produktbausteine sichtbar.
+
+1. Rolle des Billing-Reiters im Admin Panel
+Billing ist nicht
+Rechnungen
+Zahlungsabwicklung
+Vertragsänderung im UI
+tiefes Nutzer-Usage-Tracking
+operatives Lizenz-Granting im Detail
+Billing ist doch
+Vertrags-/Abo-Transparenz
+Lizenz- und Paketüberblick
+Entitlement-/Kontingentübersicht
+Zusatzkostenübersicht des aktuellen Monats
+Management-Dashboard für kaufmännische Transparenz
+2. Saubere Abgrenzung zu anderen Reitern
+Billing
+Was ist gebucht?
+Was ist enthalten?
+Was kostet der aktuelle Monat zusätzlich?
+Wie viele Lizenzen sind vorhanden / vergeben / frei?
+Permissions / Access
+Welcher User darf was?
+Welche Features sieht ein User?
+Welche Rechte hat ein User oder eine Gruppe?
+Accounting / Usage
+Wer hat wie viel verbraucht?
+Welche Teams / User verursachen Kosten?
+Input-/Output-Tokens, Dokumentenpipelines, Verteilungen
+Monitoring
+Systemzustand, KPIs, Trends, Fehlerraten, Telemetrie
+3. Mein klarer UX-Rat zur Lizenzzuweisung
+
+Du hattest gefragt, ob die Zuordnung „welcher User hat welche Lizenz“ eher in Billing oder in Permissions gehört.
+
+Meine Empfehlung
+Primäre Wahrheit in Billing
+operative Detailsteuerung in Permissions / Access
+
+Das heißt konkret:
+
+Im Billing-Reiter
+
+Nur die Lizenzsicht:
+
+gekaufte Lizenzen
+vergebene Lizenzen
+freie Lizenzen
+ggf. Liste der aktuell lizenzierten Nutzer als read-only compact view
+Hinweis auf Übernutzung / keine freien Lizenzen
+Im Permissions-/Access-Bereich
+
+Die eigentliche operative Zuweisung
+
+User auswählen
+Lizenztyp / Entitlement zuweisen
+Rechte und Feature-Sichtbarkeit steuern
+Warum das sinnvoll ist
+
+Weil „Lizenz“ fachlich näher an Entitlement als an Kostenübersicht liegt.
+Billing soll kaufmännisch klar und ruhig bleiben.
+Wenn du dort anfängst, AD-User-Listen in voller Länge zu pflegen, wird der Reiter schnell chaotisch und verwischt seine Rolle.
+
+Best Practice
+Billing zeigt Kapazität und Status
+Access/Permissions verwaltet Zuweisung
+Gute Brücke
+
+Im Billing-Reiter:
+
+KPI: 48 / 60 Lizenzen vergeben
+Button/Link: „Lizenzzuweisungen ansehen“
+springt in Access/Permissions auf gefilterte Sicht
+
+Das ist modern, sauber und verständlich.
+
+4. Empfohlene Informationsarchitektur des Billing-Reiters
+
+Ich würde Billing in 5 vertikale Blöcke schneiden:
+
+Subscription Summary
+Pakete & Module
+Lizenzen
+Inklusivkontingente
+Zusätzliche monatliche Kosten
+
+Optional darunter:
+6. Vormonat / Historischer Toggle
+
+5. Screen-Konzept im Detail
+Bereich A — Header / Subscription Summary
+
+Ganz oben ein kompakter Header mit 4–6 KPI-Karten.
+
+Inhalte
+Deployment-Typ
+On-Prem / Cloud / Custom
+Abrechnungsmodell
+z. B. Lizenz + Nutzung, nur Lizenz, Custom
+Aktive Pakete
+Gebuchte Lizenzen
+Vergebene Lizenzen
+Zusätzliche Kosten aktueller Monat
+Ziel
+
+Ein Admin oder Owner soll in 10 Sekunden verstehen:
+
+wie das Deployment grundsätzlich abgerechnet wird
+wie groß die aktuelle Kapazität ist
+ob gerade Zusatzkosten anfallen
+Darstellung
+Kartenreihe oben
+ruhige, reduzierte Zahlen
+keine übermäßige Farblogik
+nur Warnfarben bei Problemen:
+0 freie Lizenzen
+Kontingent fast aufgebraucht
+Bereich B — Subscription / Vertragslogik
+
+Dieser Block beschreibt nicht juristisch, sondern operativ verständlich, was für dieses Deployment gilt.
+
+Inhalte
+Deployment-Typ: On-Prem / Cloud
+Kostenlogik: lizenzbasiert, lizenz + Nutzung, Custom
+Abrechnungszeitraum: aktueller Monat
+Datenquelle: aus Deployment-Konfiguration
+optional: letzter Sync / letzte Aktualisierung
+Wichtig
+
+Du hast gesagt:
+Die Billing-Logik soll je nach Deployment unterschiedlich sein und am besten über eine Konfigurationsdatei gepflegt werden.
+
+Das ist ein sehr guter Ansatz.
+
+UX-Folge daraus
+
+Billing sollte im UI nicht editierbar sein, sondern:
+
+die Konfiguration nur anzeigen
+sauber erklären
+aus Config / Backend lesen
+Dev-/Designer-Hinweis
+
+Das UI sollte auf einem flexiblen Billing-Config-Schema aufbauen, nicht auf hartcodierten Plan-Namen.
+
+6. Bereich C — Pakete & Module
+
+Du hast gesagt, es wird verschiedene Pakete geben, z. B.:
+
+Grundpaket
+ToDo Manager
+Transaktionspaket
+Mail-Paket
+
+Das ist genau der Punkt, wo Billing nicht nur “eine Zahl” zeigen sollte, sondern modularen Vertragsumfang.
+
+Intern gibt es bereits modulare Produkt-/Lösungsbausteine wie ToDo Manager, Onboarding-Agent, graphenbasierte Suche und Generatoren bzw. Agents. Das unterstützt den Gedanken, Billing mit einer Paket-/Modulsicht statt mit nur einem Plan-Namen aufzubauen.
+
+UX-Empfehlung
+Keine Tabellenwüste
+
+Stattdessen:
+Paket-Cards oder List Rows mit Expand
+
+Pro Paket anzeigen
+Paketname
+Status: aktiv
+ggf. Abrechnungsart:
+inkludiert
+monatlicher Zuschlag
+nutzungsbasiert
+Kurzbeschreibung
+optional: enthaltene Features / Kontingente
+Beispielstruktur
+Grundpaket
+Basislizenz für Knowledge Platform
+Enthält Grundfunktionen und Basiskontingente
+ToDo Manager
+Zusatzmodul
+aktiviert
+monatlicher Zuschlag / oder enthalten
+Mail-Paket
+Zusatzmodul
+aktiviert
+Connector-/Paketkosten möglich
+Transaktionspaket
+Zusatzmodul
+aktiviert
+ggf. nutzungsabhängig
+Designerisch wichtig
+
+Pakete sollen scanbar sein:
+
+Name links
+Status-Badge
+Preislogik / Kostenart rechts
+aufklappbare Details
+7. Bereich D — Lizenzen
+
+Das ist der wichtigste betriebliche Teil im Billing-Reiter.
+
+Zu zeigen
+Gebuchte Lizenzen
+Vergebene Lizenzen
+Freie Lizenzen
+optional: AD-User gesamt
+optional: Nicht lizenzierte AD-User
+
+Du hast beschrieben:
+
+eine Lizenz ist eine gekaufte / freigegebene Lizenz
+es kann mehr AD-User als Lizenzen geben
+User ohne Lizenz bekommen keinen Zugriff auf relevante Features
+
+Das ist ein sehr sauberes Modell.
+
+UX-Empfehlung
+1. KPI-Karten
+60 gebucht
+48 vergeben
+12 frei
+83 AD-User gesamt
+2. Visueller Belegungsbalken
+
+Ein horizontaler Balken:
+
+grün / neutral: vergebene Lizenzen
+leerer Bereich: frei
+rot nur falls jemals relevant: Überbuchung / Konflikt
+
+Beispiel:
+48 / 60 vergeben
+
+3. Read-only Nutzerliste als Sekundärbereich
+
+Nicht als Vollverwaltungsmaske, sondern:
+
+Suchfeld
+Liste der aktuell lizenzierten User
+Lizenztyp / Paketzuordnung
+read-only
+CTA: „in Access verwalten“
+Warum das stark ist
+
+So verbindet ihr kaufmännische Sicht mit operativer Nachvollziehbarkeit, ohne Billing zu überladen.
+
+8. Bereich E — Inklusivkontingente
+
+Das sollte im Billing-Reiter sehr prominent sein, weil du genau das möchtest:
+
+Token
+Document Intelligence
+weitere mitgelieferte Kontingente
+als Balken sichtbar
+
+Interne Angebotsunterlagen zeigen bereits ein Modell mit Token-Guthaben pro Nutzer. Auch in der Finanzplanung tauchen Lizenzen und Tokenverbrauch explizit als getrennte Größen auf.
+
+UX-Empfehlung
+Kontingent-Cards mit Progress Bars
+
+Für jede relevante Nutzungskategorie eine eigene Karte:
+
+Tokens
+8,4 Mio / 10 Mio genutzt
+Fortschrittsbalken
+Restwert daneben
+Document Intelligence
+12.300 / 25.000 Dokumente
+oder
+430 / 1.000 Verarbeitungen
+Connector-/Modul-Kontingent
+
+Falls künftig relevant
+
+Wichtig
+
+Die Einheit muss je Kategorie klar sichtbar sein.
+Nicht alles in “Credits” verstecken, wenn die Nutzer eigentlich in
+
+Tokens
+Dokumenten
+Verarbeitungen
+denken.
+Balkenlogik
+0–70 % = ruhig
+70–90 % = Warnhinweis
+
+90 % = deutlich markiert
+
+Microcopy
+
+Nicht nur Zahl anzeigen, sondern auch:
+
+inkludiert im aktuellen Monat
+wird monatlich zurückgesetzt
+oder
+deploymentweit
+
+Da eure Modelllogik je Deployment unterschiedlich sein kann, sollte das Backend pro Kontingent auch den Reset-Typ und die Scope-Definition liefern.
+
+9. Bereich F — Zusätzliche monatliche Kosten
+
+Du willst:
+
+keine Rechnung
+keinen Forecast
+aber eine klare Summe und Aufschlüsselung der Zusatzkosten des aktuellen Monats
+Genau so würde ich es bauen
+Section Title
+
+Zusätzliche Kosten – aktueller Monat
+
+Enthaltene Kostenarten
+Tokens
+Document Intelligence
+Modelle
+Konnektoren
+Hosting / Infrastruktur
+
+Das entspricht deiner Vorgabe. Beratungs-/Servicekosten bleiben draußen.
+
+Darstellung
+Oben
+
+Gesamtsumme Zusatzkosten aktueller Monat
+
+Darunter
+
+Breakdown-Liste, z. B.:
+
+Token-Mehrverbrauch
+Document Intelligence
+Modellkosten
+Connector-Kosten
+Hosting-/Infrastruktur-Zuschläge
+Designerisch
+
+Nicht als “Rechnungstabelle”, sondern eher als:
+
+Category Rows
+Betrag rechts
+optional kurzer Subtext
+
+Beispiel:
+Document Intelligence
+Dokumentenverarbeitung außerhalb Inklusivkontingent
++ 124,00 €
+
+Warum Summe + Breakdown wichtig ist
+
+Management will die Gesamtsumme.
+Admins wollen die Treiber sehen.
+
+10. Bereich G — Zeitraum
+
+Du willst:
+
+Default: aktueller Monat
+optional per Toggle: letzter Monat
+
+Das ist sinnvoll und schlank.
+
+Empfehlung
+
+Oben rechts im Billing-Reiter:
+
+[ Aktueller Monat ] [ Letzter Monat ]
+
+Kein Datums-Picker als Default.
+Kein kompliziertes Zeitintervall.
+Sehr lean.
+
+Warum das reicht
+
+Billing soll kaufmännisch ruhig sein.
+Mehr historische Tiefe gehört eher in Monitoring / Accounting.
+
+11. Konkrete UI-Struktur für Designer und Frontend
+Layout-Vorschlag
+Header
+Titel: Billing
+Untertitel: Subscription, Lizenzen und Zusatzkosten
+Zeitraum-Toggle rechts: Aktueller Monat | Letzter Monat
+Row 1: KPI Summary
+Deployment-Typ
+Abrechnungsmodell
+Gebuchte Lizenzen
+Vergebene Lizenzen
+Freie Lizenzen
+Zusatzkosten aktueller Monat
+Row 2: Zwei-Spalten-Bereich
+Links: Subscription + Pakete
+Vertrags-/Modell-Card
+aktive Pakete / Module
+Rechts: Lizenzen
+License Utilization Card
+read-only licensed users preview
+Link zu Access
+Row 3: Inklusivkontingente
+Tokens
+Document Intelligence
+weitere deploymentabhängige Kontingente
+Row 4: Zusatzkosten
+aktuelle Monatssumme
+Breakdown nach Kostenarten
+
+12. Datenmodell-Empfehlung für die Billing-Config
+
+Da eure Billing-Logik je Deployment unterschiedlich ist, würde ich keine harte Plan-Logik ins Frontend codieren.
+
+Besser: config-getriebenes Modell
+
+Beispielhaft:
+
+{
+  "deploymentType": "on_prem",
+  "billingModel": "license_plus_usage",
+  "modules": [
+    { "key": "base", "name": "Grundpaket", "enabled": true, "pricingType": "included" },
+    { "key": "todo_manager", "name": "ToDo Manager", "enabled": true, "pricingType": "monthly_addon" },
+    { "key": "mail", "name": "Mail-Paket", "enabled": true, "pricingType": "monthly_addon" }
+  ],
+  "licenses": {
+    "purchased": 60,
+    "assigned": 48,
+    "adUsers": 83
+  },
+  "includedQuotas": [
+    { "key": "tokens", "name": "Tokens", "included": 10000000, "used": 8400000, "unit": "tokens" },
+    { "key": "doc_intel", "name": "Document Intelligence", "included": 25000, "used": 12300, "unit": "documents" }
+  ],
+  "additionalCosts": [
+    { "key": "tokens", "name": "Token-Mehrverbrauch", "amount": 180.00, "currency": "EUR" },
+    { "key": "doc_intel", "name": "Document Intelligence", "amount": 124.00, "currency": "EUR" },
+    { "key": "models", "name": "Modelle", "amount": 90.00, "currency": "EUR" }
+  ]
+}
+Warum das gut ist
+Frontend bleibt generisch
+Deployment-spezifische Modelle sind möglich
+Cloud / On-Prem ist nur ein Parameter
+Pakete / Kontingente / Kostenarten sind flexibel erweiterbar
+13. Was ein Designer ausdrücklich vermeiden sollte
+Rechnungsoptik
+PDF-/Invoice-Muster
+Tabellen voller Finanzdetails
+operative Nutzerverwaltung direkt im Billing
+feste, hartcodierte Plan-Namen
+Forecast, wenn ihr ihn aktuell gar nicht wollt
+Mischung von Billing und Usage pro User in derselben Hauptsicht
+14. Mein klares Zielkonzept für Billing in einem Satz
+
+Billing in Kolai sollte als lesender, modularer “Subscription & Cost Overview”-Reiter aufgebaut sein, der Deployment-Modell, aktive Pakete, Lizenzkapazität, Inklusivkontingente und zusätzliche Monatskosten transparent zeigt — ohne Rechnungen, ohne Editierlogik und ohne operative Rechteverwaltung.

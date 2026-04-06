@@ -1,0 +1,154 @@
+Reiter: Organisationsmanagement
+
+Der Reiter wird fürs Erste bewusst klein gehalten und enthält nur zwei Bereiche:
+
+Model Policies
+Prompt Standards
+
+Alles andere bleibt hier erstmal draußen.
+Die Seite darf also am Anfang ruhig sehr reduziert sein und nur diese beiden Cards / Sektionen enthalten.
+
+Zweck des Reiters
+
+Organisationsmanagement definiert den Rahmen für das gesamte Deployment / Unternehmen.
+
+Das heißt:
+
+was hier erlaubt ist, darf in User Settings auftauchen
+was hier nicht freigegeben ist, darf in User Settings nicht auswählbar sein
+User Settings sind also immer nur ein Subset der Organisationsvorgaben
+
+Das passt zur bestehenden Produktlogik, weil Modelle heute direkt im Chat über ein Model-Dropdown gewählt werden und Prompt-Vorlagen ein eigener, strukturierter Produktbaustein sind.
+
+1. Bereich: Model Policies
+Ziel
+
+Hier wird organisationsweit festgelegt:
+
+welche Modellfamilien im Deployment verfügbar sind
+welche einzelnen Modelle daraus freigegeben sind
+
+Damit definierst du den obersten Auswahlrahmen für das Unternehmen.
+
+Die Modellwahl ist im Produkt bereits ein eigener Schritt im Prompt-Workflow, und in euren Unterlagen tauchen Modellwelten wie OpenAI, Mistral, DeepSeek und xAI bereits nebeneinander auf.
+
+UI-Aufbau
+Card-Titel:
+
+Model Policies
+
+Inhalt:
+A. Dropdown 1 — Modellfamilien
+
+Multi-Select-Dropdown
+
+Beispiele:
+
+OpenAI
+Mistral
+DeepSeek
+xAI
+Meta
+
+Hier wählt die Organisation aus, welche Familien grundsätzlich erlaubt sind.
+
+B. Dropdown 2 — Einzelmodelle
+
+Multi-Select-Dropdown
+
+Dieses zweite Dropdown ist abhängig von Dropdown 1.
+
+Das bedeutet:
+
+es zeigt nur Modelle aus den ausgewählten Familien
+wenn z. B. nur OpenAI und Mistral aktiviert sind, dürfen hier auch nur OpenAI- und Mistral-Modelle erscheinen
+alle anderen Modelle sind nicht auswählbar
+Vererbungslogik zu User Settings
+
+Das ist der wichtigste Punkt:
+
+Organisationsmanagement = oberer Rahmen
+User Settings = persönliches Subset
+
+Konkret:
+
+alles, was hier nicht freigegeben ist, erscheint im User Profile nicht
+wenn eine Modellfamilie hier fehlt, darf sie ein User auch nicht auswählen
+wenn ein Einzelmodell hier nicht freigegeben ist, darf es in den User Settings nicht auftauchen
+User können also nur innerhalb des freigegebenen Modellraums filtern
+UX-Regeln
+Dropdown 1 bestimmt die Optionen in Dropdown 2
+wenn eine Modellfamilie entfernt wird, verschwinden die zugehörigen Modelle automatisch aus der Einzelmodell-Auswahl
+User Settings dürfen ausschließlich die hier freigegebenen Familien und Modelle anzeigen
+was nicht erlaubt ist, ist im User-Bereich entweder:
+gar nicht sichtbar
+oder deaktiviert / nicht vorhanden
+2. Bereich: Prompt Standards
+Ziel
+
+Hier werden einfache, organisationsweite Regeln für Prompt-Vorlagen festgelegt.
+
+Das passt gut zur bestehenden Produktlogik, weil Prompt-Vorlagen in euren Unterlagen bereits als strukturierte, wiederverwendbare Eingaben mit klaren Bausteinen wie Rolle, Ziel, Kontext, Qualitätsregeln und Ausgabeformat beschrieben werden.
+
+Für den ersten Scope nur sehr schlank
+
+Ich würde hier vorerst nur das aufnehmen, was du konkret genannt hast:
+
+A. Maximale Anzahl Labels pro Prompt
+
+Ein Number Input / Stepper
+
+Beispiel:
+
+Max. Labels pro Prompt-Vorlage: 5
+
+Das ist ein sauberer organisationsweiter Guardrail und einfach verständlich.
+
+Optionaler Aufbau der Card
+Card-Titel:
+
+Prompt Standards
+
+Inhalt:
+Max. Anzahl Labels pro Prompt-Vorlage
+kurzer Hilfetext:
+Diese Begrenzung gilt für alle Prompt-Vorlagen im Deployment.
+Empfohlene Seitenstruktur
+Reiter: Organisationsmanagement
+Abschnitt 1 — Model Policies
+Dropdown 1: Modellfamilien
+Dropdown 2: Einzelmodelle
+Vererbungsregel in Richtung User Settings
+Abschnitt 2 — Prompt Standards
+max. Anzahl Labels pro Prompt-Vorlage
+Wichtige UX-Regel für den Designer
+
+Dieser Reiter soll sich anfühlen wie:
+
+organisationsweit
+rahmensetzend
+einfach
+nicht überladen
+
+Also:
+
+keine große Admin-Tabelle
+keine User-Verwaltung
+keine Permissions
+keine Feature-Gates
+nur Allowed Set + Limits
+Kurzspezifikation für UI/UX / Dev
+Organisationsmanagement
+
+Ein schlichter Reiter mit zwei Cards:
+
+1. Model Policies
+Multi-Select für Modellfamilien
+Multi-Select für Einzelmodelle
+zweites Feld hängt vom ersten ab
+nur hier freigegebene Modelle dürfen in User Settings erscheinen
+2. Prompt Standards
+Number Input für maximale Label-Anzahl pro Prompt-Vorlage
+Vererbungsregel
+Org-Ebene gibt den Rahmen vor
+User-Ebene darf nur innerhalb dieses Rahmens konfigurieren
