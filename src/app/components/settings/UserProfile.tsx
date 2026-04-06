@@ -21,6 +21,7 @@ export function UserProfile() {
   const [selectedFamilies, setSelectedFamilies] = useState<string[]>(["openai", "mistral"]);
   const [selectedModels, setSelectedModels] = useState<string[]>(["GPT-5.1", "Mistral Large"]);
   const [defaultModel, setDefaultModel] = useState("GPT-5.1");
+  const [showLabels, setShowLabels] = useState(true);
   const [hasChanges, setHasChanges] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -111,98 +112,125 @@ export function UserProfile() {
         <h3 className="mb-1">{t("up.prefs", lang)}</h3>
         <p className="text-muted-foreground text-sm mb-5">{t("up.prefs_desc", lang)}</p>
 
-        <div className="mb-6">
-          <label className="text-sm text-muted-foreground mb-2 block">{t("up.language", lang)}</label>
-          <div className="relative w-56" ref={langRef}>
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors text-sm"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="text-lg leading-none">{currentLang.flag}</span>
-                <span>{currentLang.label}</span>
-              </div>
-              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${langOpen ? "rotate-180" : ""}`} />
-            </button>
-            {langOpen && (
-              <div className="absolute top-full left-0 mt-1 w-full bg-card border border-border rounded-xl shadow-lg z-10 py-1 overflow-hidden">
-                {languages.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => { setLang(l.code); setLangOpen(false); }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
-                      lang === l.code ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" : "hover:bg-muted/50"
-                    }`}
-                  >
-                    <span className="text-lg leading-none">{l.flag}</span>
-                    <span>{l.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Sprache */}
+          <div>
+            <label htmlFor="lang-selector" className="text-sm text-muted-foreground mb-2 block">{t("up.language", lang)}</label>
+            <div className="relative" ref={langRef}>
+              <button
+                id="lang-selector"
+                onClick={() => setLangOpen(!langOpen)}
+                className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors text-sm"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg leading-none">{currentLang.flag}</span>
+                  <span>{currentLang.label}</span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${langOpen ? "rotate-180" : ""}`} />
+              </button>
+              {langOpen && (
+                <div className="absolute top-full left-0 mt-1 w-full bg-card border border-border rounded-xl shadow-lg z-10 py-1 overflow-hidden">
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => { setLang(l.code); setLangOpen(false); }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
+                        lang === l.code ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" : "hover:bg-muted/50"
+                      }`}
+                    >
+                      <span className="text-lg leading-none">{l.flag}</span>
+                      <span>{l.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="border-t border-border/40 pt-5">
-          <h4 className="mb-3">{t("up.model_pref", lang)}</h4>
-          <div className="mb-5">
-            <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.default_model", lang)}</label>
-            <p className="text-xs text-muted-foreground mb-2">{t("up.default_model_desc", lang)}</p>
+          {/* Modellpräferenz */}
+          <div>
+            <label htmlFor="model-pref-select" className="text-sm text-muted-foreground mb-2 block">{t("up.model_pref", lang)}</label>
             <select
+              id="model-pref-select"
               value={defaultModel}
               onChange={(e) => { setDefaultModel(e.target.value); setHasChanges(true); }}
-              className="w-full max-w-xs bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
+              className="w-full bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">{t("up.please_select", lang)}</option>
               {selectedModels.map((m) => (
                 <option key={m} value={m}>{m}</option>
               ))}
             </select>
+            <p className="text-xs text-muted-foreground mt-1.5">{t("up.default_model_desc", lang)}</p>
           </div>
 
-          <div className="border-t border-border/30 pt-5">
-            <h4 className="mb-1">{t("up.selectable_models", lang)}</h4>
-            <p className="text-xs text-muted-foreground mb-4">{t("up.selectable_desc", lang)}</p>
-            <div className="mb-4">
-              <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.model_families", lang)}</label>
+          {/* Show Labels */}
+          <div>
+            <label htmlFor="show-labels-toggle" className="text-sm text-muted-foreground mb-2 block">{t("up.show_labels", lang)}</label>
+            <div className="flex items-center gap-3">
+              <button
+                id="show-labels-toggle"
+                role="switch"
+                aria-checked={showLabels}
+                aria-label={`${t("up.show_labels", lang)}, ${showLabels ? "on" : "off"}`}
+                onClick={() => { setShowLabels(!showLabels); setHasChanges(true); }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                  showLabels ? "bg-blue-600" : "bg-muted"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition-transform ${
+                    showLabels ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">{t("up.show_labels_desc", lang)}</p>
+          </div>
+        </div>
+
+        <div className="border-t border-border/40 mt-6 pt-5">
+          <h4 className="mb-1">{t("up.selectable_models", lang)}</h4>
+          <p className="text-xs text-muted-foreground mb-4">{t("up.selectable_desc", lang)}</p>
+          <div className="mb-4">
+            <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.model_families", lang)}</label>
+            <div className="flex flex-wrap gap-2">
+              {modelFamilies.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => toggleFamily(f.id)}
+                  className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
+                    selectedFamilies.includes(f.id)
+                      ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
+                      : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mb-2">
+            <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.individual_models", lang)}</label>
+            {availableModels.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">{t("up.no_families", lang)}</p>
+            ) : (
               <div className="flex flex-wrap gap-2">
-                {modelFamilies.map((f) => (
+                {availableModels.map((m) => (
                   <button
-                    key={f.id}
-                    onClick={() => toggleFamily(f.id)}
+                    key={m}
+                    onClick={() => toggleModel(m)}
                     className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
-                      selectedFamilies.includes(f.id)
+                      selectedModels.includes(m)
                         ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
                         : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
                     }`}
                   >
-                    {f.name}
+                    {m}
                   </button>
                 ))}
               </div>
-            </div>
-            <div className="mb-2">
-              <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.individual_models", lang)}</label>
-              {availableModels.length === 0 ? (
-                <p className="text-sm text-muted-foreground italic">{t("up.no_families", lang)}</p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {availableModels.map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => toggleModel(m)}
-                      className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
-                        selectedModels.includes(m)
-                          ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
-                          : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
-                      }`}
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
