@@ -33,8 +33,8 @@ const recents = [
 
 const tabDefs = [
   { key: "profile", labelKey: "tab.profile", icon: User },
-  { key: "org", labelKey: "tab.org", icon: Building2 },
   { key: "smb", labelKey: "tab.smb", icon: HardDrive },
+  { key: "org", labelKey: "tab.org", icon: Building2 },
   { key: "monitoring", labelKey: "tab.monitoring", icon: BarChart3 },
   { key: "billing", labelKey: "tab.billing", icon: CreditCard },
   { key: "permissions", labelKey: "tab.permissions", icon: Shield },
