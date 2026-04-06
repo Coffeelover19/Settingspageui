@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Camera, Upload, RotateCcw, ChevronDown } from "lucide-react";
+import { Camera, Upload, ChevronDown } from "lucide-react";
 import { useLang, t, type Lang } from "./i18n";
 
 const modelFamilies = [
@@ -61,10 +61,7 @@ export function UserProfile() {
   };
 
   const personalInfo: [string, string][] = [
-    [t("up.first_name", lang), "Maximilian"],
-    [t("up.last_name", lang), "Lechner"],
     [t("up.username", lang), "max.lechner"],
-    [t("up.email", lang), "max.lechner@kolai.eu"],
     [t("up.user_id", lang), "usr_8f3a2b1c"],
     [t("up.ad_id", lang), "ad_7e9f4d2a-3b1c-4e5f"],
   ];
@@ -72,34 +69,30 @@ export function UserProfile() {
   return (
     <div className="space-y-6">
       <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-6 shadow-sm">
-        <div className="flex items-start gap-6 mb-5">
+        <div className="flex items-start gap-6">
           <div className="relative shrink-0">
             <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl">M</div>
             <button className="absolute bottom-0 right-0 w-7 h-7 bg-card border border-border/60 rounded-full flex items-center justify-center shadow-sm hover:bg-muted transition-colors">
               <Camera className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="mb-0.5">Maximilian Lechner</h3>
-            <p className="text-sm text-muted-foreground mb-2">max.lechner@kolai.eu</p>
-            <div className="flex gap-2">
+          <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="shrink-0">
+              <h3 className="mb-0.5">Maximilian Lechner</h3>
+              <p className="text-sm text-muted-foreground mb-2">max.lechner@kolai.eu</p>
               <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border/50 rounded-lg hover:bg-muted/50 transition-colors">
                 <Upload className="w-3 h-3" /> {t("up.change_pic", lang)}
               </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border/50 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground">
-                <RotateCcw className="w-3 h-3" /> {t("up.reset", lang)}
-              </button>
+            </div>
+            <div className="flex flex-col gap-2">
+              {personalInfo.map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-0.5">
+                  <span className="text-xs text-muted-foreground">{label}</span>
+                  <span className="text-sm">{value}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3">
-          {personalInfo.map(([label, value]) => (
-            <div key={label} className="flex flex-col gap-0.5 py-1.5 border-b border-border/30">
-              <span className="text-xs text-muted-foreground">{label}</span>
-              <span className="text-sm">{value}</span>
-            </div>
-          ))}
         </div>
         <p className="text-xs text-muted-foreground mt-4 flex items-center gap-1.5">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500" />
