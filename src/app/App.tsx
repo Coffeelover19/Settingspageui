@@ -97,7 +97,7 @@ function AppContent() {
           ) : (
             <>
               {/* Sidebar */}
-              <div className="w-56 border-r border-border bg-card flex flex-col shrink-0">
+              <div className="w-56 bg-card flex flex-col shrink-0 shadow-[14px_0_58px_-12px_rgba(0,0,0,0.1)]">
                 <div className="p-3">
                   <button className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-muted transition-colors">
                     <Plus className="w-4 h-4" /> New Chat
