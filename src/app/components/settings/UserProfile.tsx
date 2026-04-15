@@ -61,7 +61,7 @@ export function UserProfile() {
     if (selectedModels.includes(model) && defaultModel === model) setDefaultModel("");
   };
 
-  const personalInfo: [string, string][] = [
+  const metaFields: [string, string][] = [
     [t("up.username", lang), "max.lechner"],
     [t("up.user_id", lang), "usr_8f3a2b1c"],
     [t("up.ad_id", lang), "ad_7e9f4d2a-3b1c-4e5f"],
@@ -69,49 +69,58 @@ export function UserProfile() {
 
   return (
     <div className="space-y-6">
+      {/* Profile Card */}
       <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-6 shadow-sm">
-        <div className="flex items-start gap-6">
-          <div className="relative shrink-0">
-            <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl">M</div>
-            <button className="absolute bottom-0 right-0 w-7 h-7 bg-card border border-border/60 rounded-full flex items-center justify-center shadow-sm hover:bg-muted transition-colors">
-              <Camera className="w-3.5 h-3.5" />
-            </button>
-          </div>
-          <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div className="shrink-0">
-              <h3 className="mb-0.5">Maximilian Lechner</h3>
-              <p className="text-sm text-muted-foreground mb-2">max.lechner@kolai.eu</p>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border/50 rounded-lg hover:bg-muted/50 transition-colors">
-                <Upload className="w-3 h-3" /> {t("up.change_pic", lang)}
+        <div className="flex items-center gap-6">
+          {/* Avatar + Change Pic */}
+          <div className="shrink-0 flex flex-col items-center gap-2">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl">M</div>
+              <button className="absolute bottom-0 right-0 w-7 h-7 bg-card border border-border/60 rounded-full flex items-center justify-center shadow-sm hover:bg-muted transition-colors">
+                <Camera className="w-3.5 h-3.5" />
               </button>
             </div>
-            <div className="flex flex-col gap-2">
-              {personalInfo.map(([label, value]) => (
-                <div key={label} className="flex flex-col gap-0.5">
-                  <span className="text-xs text-muted-foreground">{label}</span>
-                  <span className="text-sm">{value}</span>
-                </div>
-              ))}
-            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border/50 rounded-lg hover:bg-muted/50 transition-colors">
+              <Upload className="w-3 h-3" /> {t("up.change_pic", lang)}
+            </button>
+          </div>
+
+          {/* Name + Email – centered vertically */}
+          <div className="flex flex-col justify-center min-w-[200px]">
+            <h3 className="mb-0.5">Maximilian Lechner</h3>
+            <p className="text-sm text-muted-foreground">max.lechner@kolai.eu</p>
+          </div>
+
+          {/* Meta fields in one row with generous spacing */}
+          <div className="flex-1 flex items-center gap-12 pl-8">
+            {metaFields.map(([label, value]) => (
+              <div key={label} className="flex flex-col gap-0.5">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{label}</span>
+                <span className="text-sm font-medium">{value}</span>
+              </div>
+            ))}
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-4 flex items-center gap-1.5">
+
+        <p className="text-xs text-muted-foreground mt-5 flex items-center gap-1.5">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500" />
           {t("up.ad_note", lang)}
         </p>
       </div>
 
-      <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-6 shadow-sm">
+      {/* Preferences – 3-column responsive */}
+      <div className="bg-white rounded-2xl p-6 shadow-[0.5px_3px_6px_-1px_rgba(0,0,0,0.1)] border border-transparent" style={{
+        borderImage: 'linear-gradient(to bottom, rgba(229, 229, 229, 0.33), rgba(229, 229, 229, 1)) 1'
+      }}>
         <h3 className="mb-1">{t("up.prefs", lang)}</h3>
         <p className="text-muted-foreground text-sm mb-5">{t("up.prefs_desc", lang)}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Sprache */}
+          {/* Language */}
           <div>
-            <label htmlFor="lang-selector" className="text-sm text-muted-foreground mb-2 block">{t("up.language", lang)}</label>
+            <label className="text-sm text-muted-foreground mb-2 block">{t("up.language", lang)}</label>
             <div className="relative" ref={langRef}>
               <button
-                id="lang-selector"
                 onClick={() => setLangOpen(!langOpen)}
                 className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors text-sm"
               >
@@ -140,11 +149,10 @@ export function UserProfile() {
             </div>
           </div>
 
-          {/* Modellpräferenz */}
+          {/* Model Preference */}
           <div>
-            <label htmlFor="model-pref-select" className="text-sm text-muted-foreground mb-2 block">{t("up.model_pref", lang)}</label>
+            <label className="text-sm text-muted-foreground mb-2 block">{t("up.model_pref", lang)}</label>
             <select
-              id="model-pref-select"
               value={defaultModel}
               onChange={(e) => { setDefaultModel(e.target.value); setHasChanges(true); }}
               className="w-full bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
@@ -159,72 +167,68 @@ export function UserProfile() {
 
           {/* Show Labels */}
           <div>
-            <label htmlFor="show-labels-toggle" className="text-sm text-muted-foreground mb-2 block">{t("up.show_labels", lang)}</label>
+            <label className="text-sm text-muted-foreground mb-2 block">Show Labels</label>
             <div className="flex items-center gap-3">
               <button
-                id="show-labels-toggle"
-                role="switch"
-                aria-checked={showLabels}
-                aria-label={`${t("up.show_labels", lang)}, ${showLabels ? "on" : "off"}`}
                 onClick={() => { setShowLabels(!showLabels); setHasChanges(true); }}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                  showLabels ? "bg-blue-600" : "bg-muted"
-                }`}
+                className={`w-11 h-6 rounded-full relative transition-colors ${showLabels ? "bg-blue-600" : "bg-muted-foreground/30"}`}
               >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition-transform ${
-                    showLabels ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${showLabels ? "translate-x-5" : "translate-x-0.5"}`} />
               </button>
+              <span className="text-sm">{showLabels ? (lang === "de" ? "Sichtbar" : "Visible") : (lang === "de" ? "Ausgeblendet" : "Hidden")}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1.5">{t("up.show_labels_desc", lang)}</p>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {lang === "de"
+                ? "Bestimmt, ob Labels in der Prompt-Leiste angezeigt werden."
+                : "Controls whether labels are shown in the prompt bar."}
+            </p>
           </div>
         </div>
+      </div>
 
-        <div className="border-t border-border/40 mt-6 pt-5">
-          <h4 className="mb-1">{t("up.selectable_models", lang)}</h4>
-          <p className="text-xs text-muted-foreground mb-4">{t("up.selectable_desc", lang)}</p>
-          <div className="mb-4">
-            <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.model_families", lang)}</label>
+      {/* Extended Model Selection */}
+      <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-[0.5px_3px_6px_-1px_rgba(0,0,0,0.1)]">
+        <h4 className="mb-1">{t("up.selectable_models", lang)}</h4>
+        <p className="text-xs text-muted-foreground mb-4">{t("up.selectable_desc", lang)}</p>
+        <div className="mb-4">
+          <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.model_families", lang)}</label>
+          <div className="flex flex-wrap gap-2">
+            {modelFamilies.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => toggleFamily(f.id)}
+                className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
+                  selectedFamilies.includes(f.id)
+                    ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
+                    : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
+                }`}
+              >
+                {f.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mb-2">
+          <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.individual_models", lang)}</label>
+          {availableModels.length === 0 ? (
+            <p className="text-sm text-muted-foreground italic">{t("up.no_families", lang)}</p>
+          ) : (
             <div className="flex flex-wrap gap-2">
-              {modelFamilies.map((f) => (
+              {availableModels.map((m) => (
                 <button
-                  key={f.id}
-                  onClick={() => toggleFamily(f.id)}
+                  key={m}
+                  onClick={() => toggleModel(m)}
                   className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
-                    selectedFamilies.includes(f.id)
+                    selectedModels.includes(m)
                       ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
                       : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
                   }`}
                 >
-                  {f.name}
+                  {m}
                 </button>
               ))}
             </div>
-          </div>
-          <div className="mb-2">
-            <label className="text-sm text-muted-foreground mb-1.5 block">{t("up.individual_models", lang)}</label>
-            {availableModels.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">{t("up.no_families", lang)}</p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {availableModels.map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => toggleModel(m)}
-                    className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
-                      selectedModels.includes(m)
-                        ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
-                        : "bg-card border-border/50 text-muted-foreground hover:bg-muted/50"
-                    }`}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {hasChanges && (

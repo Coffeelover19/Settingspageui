@@ -39,12 +39,16 @@ const dict: Record<string, Record<Lang, string>> = {
 
   // ============ USER PROFILE ============
   "up.change_pic": { de: "Bild ändern", en: "Change Picture" },
+  "up.reset": { de: "Zurücksetzen", en: "Reset" },
+  "up.first_name": { de: "Vorname", en: "First Name" },
+  "up.last_name": { de: "Nachname", en: "Last Name" },
   "up.username": { de: "Username", en: "Username" },
+  "up.email": { de: "E-Mail", en: "Email" },
   "up.user_id": { de: "Benutzer-ID", en: "User ID" },
   "up.ad_id": { de: "Microsoft AD-ID", en: "Microsoft AD ID" },
   "up.ad_note": { de: "Felder werden aus Microsoft Active Directory übernommen und können hier nicht geändert werden.", en: "Fields are synced from Microsoft Active Directory and cannot be changed here." },
   "up.prefs": { de: "Persönliche Präferenzen", en: "Personal Preferences" },
-  "up.prefs_desc": { de: "Sprache, Modell- und Anzeigeeinstellungen für Ihre Nutzung.", en: "Language, model and display settings for your usage." },
+  "up.prefs_desc": { de: "Sprache und Modelleinstellungen für Ihre Nutzung.", en: "Language and model settings for your usage." },
   "up.language": { de: "Sprache", en: "Language" },
   "up.model_pref": { de: "Modellpräferenz", en: "Model Preference" },
   "up.default_model": { de: "Standardmodell", en: "Default Model" },
@@ -55,8 +59,6 @@ const dict: Record<string, Record<Lang, string>> = {
   "up.model_families": { de: "Modellfamilien", en: "Model Families" },
   "up.individual_models": { de: "Einzelmodelle", en: "Individual Models" },
   "up.no_families": { de: "Bitte wähle zuerst Modellfamilien aus.", en: "Please select model families first." },
-  "up.show_labels": { de: "Labels anzeigen", en: "Show Labels" },
-  "up.show_labels_desc": { de: "Zeigt Labels in der Promptbar an, um Prompt-Vorlagen schneller zu finden und zu filtern.", en: "Display labels in the prompt bar to quickly find and filter prompt templates." },
   "up.discard": { de: "Verwerfen", en: "Discard" },
   "up.save": { de: "Änderungen speichern", en: "Save Changes" },
 
