@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Plus, FolderOpen, FileText, Layers, Moon, Sun, HelpCircle, PanelLeft,
   Settings, MessageSquare, ChevronDown, BookOpen, FlaskConical,
-  User, Building2, HardDrive, BarChart3, CreditCard, Shield, Eye,
+  User, Building2, HardDrive, BarChart3, CreditCard, Shield, Eye, Image as ImageIcon,
 } from "lucide-react";
 import { UserProfile } from "./components/settings/UserProfile";
 import { OrgManagement } from "./components/settings/OrgManagement";
@@ -13,11 +13,13 @@ import { Permissions } from "./components/settings/Permissions";
 import { FeatureGating } from "./components/settings/FeatureGating";
 import { LangProvider, useLang, t } from "./components/settings/i18n";
 import { SettingsLab } from "./components/settings-lab/SettingsLab";
+import { Media } from "./components/media/Media";
 
 const sidebarItems = [
   { icon: FolderOpen, label: "Projects" },
   { icon: FileText, label: "Prompt Library" },
   { icon: Layers, label: "Contexts" },
+  { icon: ImageIcon, label: "Media" },
 ];
 
 const recents = [
@@ -47,6 +49,7 @@ function AppContent() {
   const [darkMode, setDarkMode] = useState(false);
   const [showSettings, setShowSettings] = useState(true);
   const [showAltSettings, setShowAltSettings] = useState(false);
+  const [showMedia, setShowMedia] = useState(false);
 
   const renderTab = () => {
     switch (activeTab) {
@@ -104,15 +107,27 @@ function AppContent() {
                   </button>
                 </div>
                 <div className="px-3 space-y-0.5">
-                  {sidebarItems.map((item) => (
-                    <button
-                      key={item.label}
-                      onClick={() => setShowSettings(false)}
-                      className="w-full flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg hover:bg-muted transition-colors text-muted-foreground"
-                    >
-                      <item.icon className="w-4 h-4" /> {item.label}
-                    </button>
-                  ))}
+                  {sidebarItems.map((item) => {
+                    const isMedia = item.label === "Media";
+                    const active = isMedia && showMedia;
+                    return (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          if (isMedia) {
+                            setShowMedia(true);
+                            setShowSettings(false);
+                          } else {
+                            setShowMedia(false);
+                            setShowSettings(false);
+                          }
+                        }}
+                        className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${active ? "bg-blue-600 text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                      >
+                        <item.icon className="w-4 h-4" /> {item.label}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="px-3 mt-4">
                   <div className="text-xs text-muted-foreground mb-2 px-3">RECENTS</div>
@@ -127,7 +142,7 @@ function AppContent() {
 
                 <div className="mt-auto border-t border-border p-3 space-y-1">
                   <button
-                    onClick={() => { setShowAltSettings(true); setShowSettings(false); }}
+                    onClick={() => { setShowAltSettings(true); setShowSettings(false); setShowMedia(false); }}
                     className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${showAltSettings ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                   >
                     <FlaskConical className="w-4 h-4" /> Settings Lab
@@ -144,7 +159,7 @@ function AppContent() {
                       </div>
                     </div>
                     <button
-                      onClick={() => { setShowSettings(true); setShowAltSettings(false); setActiveTab("profile"); }}
+                      onClick={() => { setShowSettings(true); setShowAltSettings(false); setShowMedia(false); setActiveTab("profile"); }}
                       className={`p-1 rounded-md transition-colors shrink-0 ${showSettings ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
                     >
                       <Settings className="w-4 h-4" />
@@ -155,7 +170,11 @@ function AppContent() {
 
               {/* Main Content */}
               <div className="flex-1 overflow-hidden flex flex-col bg-muted/30 shadow-[inset_14px_0_58px_-12px_rgba(0,0,0,0.1)]">
-                {showSettings ? (
+                {showMedia ? (
+                  <div className="flex-1 overflow-y-auto">
+                    <Media />
+                  </div>
+                ) : showSettings ? (
                   <>
                     {/* Settings Header */}
                     <div className="shrink-0 pt-6 pb-0">
