@@ -1,7 +1,34 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Users, MessageSquare, FileWarning, AlertTriangle, MessageCircle, Zap } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from "recharts";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Filler,
+  Tooltip as ChartTooltip,
+  Legend as ChartLegend,
+  type ChartOptions,
+} from "chart.js";
+import { Line as LineChartJS, Bar as BarChartJS, Doughnut as DoughnutChartJS } from "react-chartjs-2";
 import { useLang, t } from "./i18n";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Filler,
+  ChartTooltip,
+  ChartLegend,
+);
+
+const ANIMATION_MS = 2000;
 
 const userTrend = [
   { day: "Mo", users: 42 }, { day: "Di", users: 45 }, { day: "Mi", users: 48 },
@@ -85,6 +112,204 @@ export function Monitoring() {
   const totalInput = tokenData.reduce((a, b) => a + b.input, 0);
   const totalOutput = tokenData.reduce((a, b) => a + b.output, 0);
 
+  // Chart.js datasets / options
+  const tokenChartData = useMemo(() => ({
+    labels: tokenData.map((d) => d.label),
+    datasets: [
+      {
+        label: "Input Tokens",
+        data: tokenData.map((d) => d.input),
+        borderColor: "#3b82f6",
+        backgroundColor: (ctx: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { top: number; bottom: number } } }) => {
+          const { ctx: c, chartArea } = ctx.chart;
+          if (!chartArea) return "rgba(59, 130, 246, 0.15)";
+          const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, "rgba(59, 130, 246, 0.35)");
+          gradient.addColorStop(1, "rgba(59, 130, 246, 0)");
+          return gradient;
+        },
+        borderWidth: 2,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "#3b82f6",
+        pointHoverBorderColor: "#fff",
+        pointHoverBorderWidth: 2,
+      },
+      {
+        label: "Output Tokens",
+        data: tokenData.map((d) => d.output),
+        borderColor: "#10b981",
+        backgroundColor: (ctx: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { top: number; bottom: number } } }) => {
+          const { ctx: c, chartArea } = ctx.chart;
+          if (!chartArea) return "rgba(16, 185, 129, 0.15)";
+          const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, "rgba(16, 185, 129, 0.35)");
+          gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
+          return gradient;
+        },
+        borderWidth: 2,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "#10b981",
+        pointHoverBorderColor: "#fff",
+        pointHoverBorderWidth: 2,
+      },
+    ],
+  }), [tokenData]);
+
+  const tokenChartOptions: ChartOptions<"line"> = useMemo(() => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: ANIMATION_MS, easing: "easeOutQuart" },
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: true,
+        backgroundColor: "rgba(17, 24, 39, 0.92)",
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        borderColor: "rgba(255,255,255,0.08)",
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label}: ${formatTokens(ctx.parsed.y as number)}`,
+        },
+      },
+    },
+    scales: {
+      x: { grid: { color: "rgba(148, 163, 184, 0.15)" }, ticks: { font: { size: 11 } } },
+      y: {
+        grid: { color: "rgba(148, 163, 184, 0.15)" },
+        ticks: { font: { size: 11 }, callback: (v) => formatTokens(v as number) },
+      },
+    },
+  }), []);
+
+  const userTrendData = useMemo(() => ({
+    labels: userTrend.map((d) => d.day),
+    datasets: [
+      {
+        label: t("mon.active_users", lang),
+        data: userTrend.map((d) => d.users),
+        borderColor: "#3b82f6",
+        backgroundColor: "rgba(59, 130, 246, 0.15)",
+        borderWidth: 2,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "#3b82f6",
+        pointHoverBorderColor: "#fff",
+        pointHoverBorderWidth: 2,
+        fill: false,
+      },
+    ],
+  }), [lang]);
+
+  const userTrendOptions: ChartOptions<"line"> = useMemo(() => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: ANIMATION_MS, easing: "easeOutQuart" },
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "rgba(17, 24, 39, 0.92)",
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        borderColor: "rgba(255,255,255,0.08)",
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+      },
+    },
+    scales: {
+      x: { grid: { color: "rgba(148, 163, 184, 0.15)" }, ticks: { font: { size: 12 } } },
+      y: { grid: { color: "rgba(148, 163, 184, 0.15)" }, ticks: { font: { size: 12 } }, beginAtZero: true },
+    },
+  }), []);
+
+  const featureAdoptionData = useMemo(() => ({
+    labels: featureAdoption.map((d) => d.name),
+    datasets: [
+      {
+        label: t("mon.feature_adoption", lang),
+        data: featureAdoption.map((d) => d.usage),
+        backgroundColor: "rgba(99, 102, 241, 0.85)",
+        hoverBackgroundColor: "#6366f1",
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+    ],
+  }), [lang]);
+
+  const featureAdoptionOptions: ChartOptions<"bar"> = useMemo(() => ({
+    indexAxis: "y" as const,
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: ANIMATION_MS, easing: "easeOutQuart" },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "rgba(17, 24, 39, 0.92)",
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        borderColor: "rgba(255,255,255,0.08)",
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: { label: (ctx) => `${ctx.parsed.x}%` },
+      },
+    },
+    scales: {
+      x: {
+        min: 0,
+        max: 100,
+        grid: { color: "rgba(148, 163, 184, 0.15)" },
+        ticks: { font: { size: 11 }, callback: (v) => `${v}%` },
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } },
+    },
+  }), []);
+
+  const feedbackPieData = useMemo(() => ({
+    labels: feedbackPie.map((f) => t(f.nameKey, lang)),
+    datasets: [
+      {
+        data: feedbackPie.map((f) => f.value),
+        backgroundColor: feedbackPie.map((f) => f.color),
+        borderColor: "var(--card)",
+        borderWidth: 2,
+        hoverOffset: 8,
+      },
+    ],
+  }), [lang]);
+
+  const feedbackPieOptions: ChartOptions<"doughnut"> = useMemo(() => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "62%",
+    animation: { duration: ANIMATION_MS, easing: "easeOutQuart" },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "rgba(17, 24, 39, 0.92)",
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        borderColor: "rgba(255,255,255,0.08)",
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` },
+      },
+    },
+  }), []);
+
   return (
     <div className="space-y-8">
       {/* Executive Summary */}
@@ -149,26 +374,9 @@ export function Monitoring() {
             </span>
             <span>{t("mon.total", lang)}: {formatTokens(totalInput + totalOutput)}</span>
           </div>
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart key={tokenTimeScale} data={tokenData}>
-              <defs>
-                <linearGradient id="tokenInputGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="tokenOutputGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={formatTokens} />
-              <Tooltip formatter={(value: number) => formatTokens(value)} />
-              <Area type="monotone" dataKey="input" stroke="#3b82f6" strokeWidth={2} fill="url(#tokenInputGrad)" name="Input Tokens" />
-              <Area type="monotone" dataKey="output" stroke="#10b981" strokeWidth={2} fill="url(#tokenOutputGrad)" name="Output Tokens" />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div style={{ height: 240 }}>
+            <LineChartJS key={tokenTimeScale} data={tokenChartData} options={tokenChartOptions} />
+          </div>
         </div>
       </section>
 
@@ -177,27 +385,15 @@ export function Monitoring() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-5 shadow-sm">
             <h4 className="mb-4 text-sm">{t("mon.user_trend", lang)}</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={userTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="users" stroke="#3b82f6" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
+            <div style={{ height: 200 }}>
+              <LineChartJS data={userTrendData} options={userTrendOptions} />
+            </div>
           </div>
           <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-5 shadow-sm">
             <h4 className="mb-4 text-sm">{t("mon.feature_adoption", lang)}</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={featureAdoption} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis type="number" tick={{ fontSize: 11 }} domain={[0, 100]} />
-                <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
-                <Tooltip />
-                <Bar dataKey="usage" fill="#6366f1" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div style={{ height: 200 }}>
+              <BarChartJS data={featureAdoptionData} options={featureAdoptionOptions} />
+            </div>
           </div>
         </div>
       </section>
@@ -257,17 +453,8 @@ export function Monitoring() {
 
           <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-5 shadow-sm">
             <h4 className="mb-4 text-sm">{t("mon.feedback_categories", lang)}</h4>
-            <div className="flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={feedbackPie.map(f => ({ ...f, name: t(f.nameKey, lang) }))} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={80}>
-                    {feedbackPie.map((entry) => (
-                      <Cell key={entry.nameKey} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="flex items-center justify-center" style={{ height: 200 }}>
+              <DoughnutChartJS data={feedbackPieData} options={feedbackPieOptions} />
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-2">
               {feedbackPie.map((f) => (
