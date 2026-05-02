@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, ChevronDown, FolderOpen, Folder, Plus, Minus, RotateCcw, Search, X, Users, UserPlus, UserMinus, Layers } from "lucide-react";
+import { ChevronRight, ChevronDown, FolderOpen, Folder, Plus, Minus, RotateCcw, Search, X, Users, UserPlus, UserMinus, Layers, Server, KeyRound, Eye, EyeOff, FileType2, FlaskConical, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useLang, t } from "./i18n";
 
 type TreeNode = {
@@ -395,8 +395,22 @@ export function SMBConfig() {
   const [search, setSearch] = useState("");
   const [fileBlacklist, setFileBlacklist] = useState<string[]>(["*.tmp", "*.log", "~$*"]);
   const [folderBlacklist, setFolderBlacklist] = useState<string[]>(["node_modules", ".git", "temp"]);
+  const [docTypeBlacklist, setDocTypeBlacklist] = useState<string[]>(["*.pdf", "*.docx", "*.xlsx", "*.pptx"]);
   const [newFilePattern, setNewFilePattern] = useState("");
   const [newFolderPattern, setNewFolderPattern] = useState("");
+  const [newDocTypePattern, setNewDocTypePattern] = useState("");
+
+  // New context form state
+  const [showNewContextForm, setShowNewContextForm] = useState(false);
+  const [newCtxName, setNewCtxName] = useState("");
+  const [newCtxHost, setNewCtxHost] = useState("");
+  const [newCtxShare, setNewCtxShare] = useState("");
+  const [newCtxPort, setNewCtxPort] = useState("445");
+  const [newCtxDomain, setNewCtxDomain] = useState("");
+  const [newCtxUsername, setNewCtxUsername] = useState("");
+  const [newCtxPassword, setNewCtxPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [testStatus, setTestStatus] = useState<"idle" | "testing" | "ok" | "fail">("idle");
 
   const toggleExpand = (id: string) => {
     setExpanded((prev) => {
@@ -436,28 +450,216 @@ export function SMBConfig() {
 
   const removeFolderPattern = (pattern: string) => setFolderBlacklist((prev) => prev.filter((p) => p !== pattern));
 
+  const addDocTypePattern = () => {
+    if (newDocTypePattern.trim() && !docTypeBlacklist.includes(newDocTypePattern.trim())) {
+      setDocTypeBlacklist((prev) => [...prev, newDocTypePattern.trim()]);
+      setNewDocTypePattern("");
+    }
+  };
+
+  const removeDocTypePattern = (pattern: string) => setDocTypeBlacklist((prev) => prev.filter((p) => p !== pattern));
+
+  const resetNewContextForm = () => {
+    setNewCtxName("");
+    setNewCtxHost("");
+    setNewCtxShare("");
+    setNewCtxPort("445");
+    setNewCtxDomain("");
+    setNewCtxUsername("");
+    setNewCtxPassword("");
+    setShowPassword(false);
+    setTestStatus("idle");
+    setShowNewContextForm(false);
+  };
+
+  const handleTestConfig = () => {
+    setTestStatus("testing");
+    setTimeout(() => {
+      setTestStatus(newCtxHost.trim() ? "ok" : "fail");
+    }, 1500);
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-card/70 backdrop-blur-sm rounded-2xl border border-border/60 p-6 shadow-sm">
         <h3 className="mb-1">{t("smb.title", lang)}</h3>
         <p className="text-muted-foreground text-sm mb-5">{t("smb.desc", lang)}</p>
 
-        <div className="flex flex-col lg:flex-row gap-4 mb-4">
-          <select className="bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm flex-1 max-w-xs">
-            <option>{t("smb.context_default", lang)}</option>
-            <option>{t("smb.context_contracts", lang)}</option>
-            <option>{t("smb.context_knowledge", lang)}</option>
+        {/* Context selector row */}
+        <div className="flex items-center gap-3 mb-2">
+          <select
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm flex-1 max-w-xs"
+          >
+            <option value="">{t("smb.context_default", lang)}</option>
+            <option value="contracts">{t("smb.context_contracts", lang)}</option>
+            <option value="knowledge">{t("smb.context_knowledge", lang)}</option>
           </select>
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("smb.jump_to_path", lang)}
-              className="w-full bg-muted/20 border border-border/50 rounded-lg pl-9 pr-3 py-2 text-sm"
-            />
-          </div>
+          <button
+            onClick={() => setShowNewContextForm((v) => !v)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all ${
+              showNewContextForm
+                ? "bg-blue-600 text-white"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+          >
+            <Plus className="w-4 h-4" />
+            {t("smb.new_context", lang)}
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showNewContextForm ? "rotate-180" : ""}`} />
+          </button>
         </div>
+
+        {/* Expandable New Context Form */}
+        {showNewContextForm && (
+          <div className="mb-4 border border-blue-200/60 dark:border-blue-800/50 rounded-xl bg-blue-50/30 dark:bg-blue-900/10 overflow-hidden">
+            <div className="p-5 space-y-5">
+              <div className="grid md:grid-cols-2 gap-5">
+                {/* SMB Server Config */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Server className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm">{t("smb.smb_server_config", lang)}</span>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t("smb.host", lang)}</label>
+                    <input
+                      value={newCtxHost}
+                      onChange={(e) => { setNewCtxHost(e.target.value); setTestStatus("idle"); }}
+                      placeholder={t("smb.host_ph", lang)}
+                      className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">{t("smb.share", lang)}</label>
+                      <input
+                        value={newCtxShare}
+                        onChange={(e) => setNewCtxShare(e.target.value)}
+                        placeholder={t("smb.share_ph", lang)}
+                        className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">{t("smb.port", lang)}</label>
+                      <input
+                        value={newCtxPort}
+                        onChange={(e) => setNewCtxPort(e.target.value)}
+                        placeholder="445"
+                        className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+                  {/* Domain field – no button here anymore */}
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t("smb.domain", lang)}</label>
+                    <input
+                      value={newCtxDomain}
+                      onChange={(e) => { setNewCtxDomain(e.target.value); setTestStatus("idle"); }}
+                      placeholder={t("smb.domain_ph", lang)}
+                      className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  {/* Context Name – last field in SMB section */}
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t("smb.new_context_name", lang)}</label>
+                    <input
+                      value={newCtxName}
+                      onChange={(e) => setNewCtxName(e.target.value)}
+                      placeholder={t("smb.new_context_name_ph", lang)}
+                      className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Credential Config */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <KeyRound className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm">{t("smb.credential_config", lang)}</span>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t("smb.username", lang)}</label>
+                    <input
+                      value={newCtxUsername}
+                      onChange={(e) => setNewCtxUsername(e.target.value)}
+                      placeholder="username"
+                      className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t("smb.password", lang)}</label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={newCtxPassword}
+                        onChange={(e) => setNewCtxPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full bg-card border border-border/60 rounded-lg px-3 py-2 pr-9 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  {/* Test Configuration button – below credentials */}
+                  <button
+                    type="button"
+                    onClick={handleTestConfig}
+                    disabled={testStatus === "testing"}
+                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm border transition-all mt-1 ${
+                      testStatus === "ok"
+                        ? "border-green-400 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                        : testStatus === "fail"
+                        ? "border-red-400 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                        : testStatus === "testing"
+                        ? "border-border/50 bg-muted/20 text-muted-foreground"
+                        : "border-border/50 bg-card hover:bg-muted/20 text-foreground"
+                    }`}
+                  >
+                    {testStatus === "testing" ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : testStatus === "ok" ? (
+                      <CheckCircle2 className="w-4 h-4" />
+                    ) : testStatus === "fail" ? (
+                      <XCircle className="w-4 h-4" />
+                    ) : (
+                      <FlaskConical className="w-4 h-4" />
+                    )}
+                    {testStatus === "testing"
+                      ? t("smb.test_running", lang)
+                      : testStatus === "ok"
+                      ? t("smb.test_ok", lang)
+                      : testStatus === "fail"
+                      ? t("smb.test_fail", lang)
+                      : t("smb.test_config", lang)}
+                  </button>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 pt-1 border-t border-border/30">
+                <button
+                  onClick={resetNewContextForm}
+                  className="px-3 py-2 rounded-lg text-sm border border-border/50 hover:bg-muted/30 transition-colors"
+                >
+                  {t("smb.cancel", lang)}
+                </button>
+                <button
+                  onClick={resetNewContextForm}
+                  className="px-4 py-2 rounded-lg text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t("smb.create_context", lang)}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 border border-border/50 rounded-xl p-4 min-h-[400px] bg-muted/10 overflow-auto">
@@ -499,7 +701,8 @@ export function SMBConfig() {
           <h4 className="text-sm mb-1">{t("smb.blacklist_patterns", lang)}</h4>
           <p className="text-muted-foreground text-xs mb-4">{t("smb.blacklist_desc", lang)}</p>
 
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* File Name Blacklist */}
             <div>
               <h4 className="text-sm mb-3">{t("smb.file_blacklist", lang)}</h4>
               <div className="flex gap-2 mb-3">
@@ -511,7 +714,7 @@ export function SMBConfig() {
                   className="flex-1 bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
                 />
                 <button onClick={addFilePattern} className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm">
-                  <Plus className="w-4 h-4" /> {t("smb.add", lang)}
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
               <div className="space-y-2">
@@ -530,6 +733,41 @@ export function SMBConfig() {
               </div>
             </div>
 
+            {/* Document Type Blacklist */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <h4 className="text-sm">{t("smb.doctype_blacklist", lang)}</h4>
+                <FileType2 className="w-3.5 h-3.5 text-muted-foreground" />
+              </div>
+              <div className="flex gap-2 mb-3">
+                <input
+                  value={newDocTypePattern}
+                  onChange={(e) => setNewDocTypePattern(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addDocTypePattern()}
+                  placeholder={t("smb.doctype_placeholder", lang)}
+                  className="flex-1 bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
+                />
+                <button onClick={addDocTypePattern} className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm">
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {docTypeBlacklist.length === 0 ? (
+                  <p className="text-sm text-muted-foreground italic">{t("smb.no_doctype_patterns", lang)}</p>
+                ) : (
+                  docTypeBlacklist.map((pattern, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-border/40">
+                      <code className="text-sm text-foreground font-mono">{pattern}</code>
+                      <button onClick={() => removeDocTypePattern(pattern)} className="text-muted-foreground hover:text-destructive">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Folder Name Blacklist */}
             <div>
               <h4 className="text-sm mb-3">{t("smb.folder_blacklist", lang)}</h4>
               <div className="flex gap-2 mb-3">
@@ -541,7 +779,7 @@ export function SMBConfig() {
                   className="flex-1 bg-muted/20 border border-border/50 rounded-lg px-3 py-2 text-sm"
                 />
                 <button onClick={addFolderPattern} className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm">
-                  <Plus className="w-4 h-4" /> {t("smb.add", lang)}
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
               <div className="space-y-2">
@@ -571,14 +809,6 @@ export function SMBConfig() {
 
       {/* Context User Management */}
       <ContextUserManagement lang={lang} />
-
-      <div className="sticky bottom-0 bg-card/60 backdrop-blur-md border border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-lg">
-        <span className="text-sm text-muted-foreground">{t("smb.save_note", lang)}</span>
-        <div className="flex gap-3">
-          <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">{t("smb.discard", lang)}</button>
-          <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">{t("smb.review_apply", lang)}</button>
-        </div>
-      </div>
     </div>
   );
 }
